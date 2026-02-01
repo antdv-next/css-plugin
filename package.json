@@ -1,0 +1,17 @@
+{
+  "name": "antdv-next-css-plugin-workspace",
+  "type": "module",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.18.3",
+  "scripts": {
+    "build": "pnpm -r build",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "devDependencies": {
+    "@vue/tsconfig": "catalog:dev",
+    "bumpp": "catalog:dev",
+    "tsdown": "catalog:dev",
+    "typescript": "catalog:dev"
+  }
+}

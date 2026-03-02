@@ -209,8 +209,8 @@ importers:
         specifier: catalog:example
         version: 24.11.0
       tailwindcss:
-        specifier: catalog:v4
-        version: 4.2.1
+        specifier: catalog:v3
+        version: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
       tsx:
         specifier: catalog:dev
         version: 4.21.0

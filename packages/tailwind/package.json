@@ -21,7 +21,8 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "default": "./dist/index.js"
+      "default": "./dist/index.js",
+      "style": "./theme.css"
     },
     "./v4": {
       "types": "./dist/v4.d.ts",
@@ -50,7 +51,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:example",
-    "tailwindcss": "catalog:v4",
+    "tailwindcss": "catalog:v3",
     "tsx": "catalog:dev"
   }
 }

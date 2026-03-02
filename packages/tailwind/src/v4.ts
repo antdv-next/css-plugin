@@ -116,10 +116,12 @@ export function generateThemeCSS(options: AntdPluginOptions = {}): string {
   lines.push(`  --spacing-xxs: var(--${antPrefix}-padding-xxs);`)
   lines.push(`  --spacing-xs: var(--${antPrefix}-padding-xs);`)
   lines.push(`  --spacing-sm: var(--${antPrefix}-padding-sm);`)
-  lines.push(`  --spacing-DEFAULT: var(--${antPrefix}-padding);`)
+  // 不生成 --spacing-DEFAULT，避免出现 p-DEFAULT / m-DEFAULT 等无意义工具类
   lines.push(`  --spacing-md: var(--${antPrefix}-padding-md);`)
   lines.push(`  --spacing-lg: var(--${antPrefix}-padding-lg);`)
   lines.push(`  --spacing-xl: var(--${antPrefix}-padding-xl);`)
+  lines.push(`  --spacing-xxl: var(--${antPrefix}-padding-xxl);`)
+  lines.push(`  --spacing-xxxl: var(--${antPrefix}-padding-xxxl);`)
 
   // 圆角变量 --radius-*
   lines.push('')

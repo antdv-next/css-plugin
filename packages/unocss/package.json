@@ -1,7 +1,7 @@
 {
   "name": "@antdv-next/unocss",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "antd-unocss preset for Ant Design Vue Next",
   "repository": {
     "type": "git",

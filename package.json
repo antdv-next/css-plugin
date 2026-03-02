@@ -9,9 +9,10 @@
     "preinstall": "npx only-allow pnpm"
   },
   "devDependencies": {
-    "@vue/tsconfig": "catalog:dev",
+    "@vue/tsconfig": "catalog:",
+    "antdv-next": "catalog:",
     "bumpp": "catalog:dev",
     "tsdown": "catalog:dev",
-    "typescript": "catalog:dev"
+    "typescript": "catalog:"
   }
 }

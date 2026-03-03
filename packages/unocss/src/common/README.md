@@ -27,7 +27,6 @@ common/
 
 ### theme.ts
 - `buildColorsTheme()` - 构建颜色主题
-- `buildSpacingTheme()` - 构建间距主题
 - `buildBorderRadiusTheme()` - 构建边框圆角主题（Wind3 风格）
 - `buildRadiusTheme()` - 构建边框圆角主题（Tailwind 4 风格）
 - `buildFontSizeTheme()` - 构建字体大小主题（Wind3 风格）
@@ -56,7 +55,6 @@ import {
   buildFontSizeTheme,
   buildPalettes,
   buildShadowTheme,
-  buildSpacingTheme,
   createAutocompleteTemplates,
   createBorderRules,
   createColorRules,
@@ -75,7 +73,6 @@ export const presetAntd = definePreset((options?: AntdPresetOptions): Preset => 
     name: 'preset-antd',
     theme: {
       colors: buildColorsTheme(antPrefix, builtPalettes),
-      spacing: buildSpacingTheme(antPrefix),
       borderRadius: buildBorderRadiusTheme(antPrefix),
       fontSize: buildFontSizeTheme(antPrefix),
       boxShadow: buildShadowTheme(antPrefix),
@@ -83,7 +80,7 @@ export const presetAntd = definePreset((options?: AntdPresetOptions): Preset => 
     rules: ([
       ...createColorRules(prefix),
       ...createBorderRules(prefix),
-      ...createSpacingRules(prefix),
+      ...createSpacingRules(prefix, antPrefix),
       ...createTextRules(prefix, 'fontSize'),
       ...createRoundedRules(prefix, 'borderRadius'),
       ...createShadowRules(prefix, 'boxShadow'),
@@ -110,7 +107,6 @@ import {
   buildPalettes,
   buildRadiusTheme,
   buildShadowTheme,
-  buildSpacingTheme,
   buildTextTheme,
   createAutocompleteTemplates,
   createBorderRules,
@@ -130,7 +126,6 @@ export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Op
     name: 'preset-antd-tailwind4',
     theme: {
       colors: buildColorsTheme(antPrefix, builtPalettes),
-      spacing: buildSpacingTheme(antPrefix),
       radius: buildRadiusTheme(antPrefix),
       text: buildTextTheme(antPrefix),
       shadow: buildShadowTheme(antPrefix),
@@ -139,7 +134,7 @@ export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Op
     rules: ([
       ...createColorRules(prefix),
       ...createBorderRules(prefix),
-      ...createSpacingRules(prefix),
+      ...createSpacingRules(prefix, antPrefix),
       ...createTextRules(prefix, 'text'),
       ...createRoundedRules(prefix, 'radius'),
       ...createShadowRules(prefix, 'shadow'),

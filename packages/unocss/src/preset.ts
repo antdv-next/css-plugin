@@ -7,7 +7,6 @@ import {
   buildFontSizeTheme,
   buildPalettes,
   buildShadowTheme,
-  buildSpacingTheme,
   createAutocompleteTemplates,
   createBorderRules,
   createColorRules,
@@ -32,7 +31,6 @@ export const presetAntd = definePreset((options?: AntdPresetOptions): Preset => 
     name: 'preset-antd',
     theme: {
       colors: buildColorsTheme(antPrefix, builtPalettes),
-      spacing: buildSpacingTheme(antPrefix),
       borderRadius: buildBorderRadiusTheme(antPrefix),
       fontSize: buildFontSizeTheme(antPrefix),
       boxShadow: buildShadowTheme(antPrefix),
@@ -43,14 +41,14 @@ export const presetAntd = definePreset((options?: AntdPresetOptions): Preset => 
       // 带前缀的规则 (如 a-mx-lg)
       ...createColorRules(prefix),
       ...createBorderRules(prefix),
-      ...createSpacingRules(prefix),
+      ...createSpacingRules(prefix, antPrefix),
       ...createTextRules(prefix, 'fontSize'),
       ...createRoundedRules(prefix, 'borderRadius'),
       ...createShadowRules(prefix, 'boxShadow'),
       // 不带前缀的规则 (如 mx-lg)
       ...createColorRules(''),
       ...createBorderRules(''),
-      ...createSpacingRules(''),
+      ...createSpacingRules('', antPrefix),
       ...createTextRules('', 'fontSize'),
       ...createRoundedRules('', 'borderRadius'),
       ...createShadowRules('', 'boxShadow'),

@@ -58,7 +58,8 @@ Tailwind v4 的主题变量命名约定：
 | 命名空间 | 工具类示例 | Ant Design 变量 |
 |---------|-----------|----------------|
 | `--color-*` | `bg-primary`, `text-blue-5` | `--ant-color-*`, `--ant-blue-*` |
-| `--spacing-*` | `p-lg`, `m-sm` | `--ant-padding-*` |
+| `--padding-*` | `p-lg`, `px-sm` | `--ant-padding-*` |
+| `--margin-*` | `m-lg`, `my-sm` | `--ant-margin-*` |
 | `--radius-*` | `rounded-lg` | `--ant-border-radius-*` |
 | `--text-*` | `text-h1` | `--ant-font-size-*` |
 | `--shadow-*` | `shadow-card` | `--ant-box-shadow-*` |
@@ -171,17 +172,15 @@ export default {
 <div class="p-xxs">4px 内边距</div>
 <div class="p-xs">8px 内边距</div>
 <div class="p-sm">12px 内边距</div>
-<div class="p">16px 内边距（默认）</div>
 <div class="p-md">20px 内边距</div>
 <div class="p-lg">24px 内边距</div>
 <div class="p-xl">32px 内边距</div>
 
 <!-- 外边距 -->
 <div class="m-lg">24px 外边距</div>
-
-<!-- 间隙 -->
-<div class="gap-md">20px 间隙</div>
 ```
+
+> 注意：v3 和 v4 都不再覆盖 Tailwind 全局 spacing，因此 `max-w-md`、`gap-*` 等类保持 Tailwind 默认行为。
 
 ### 圆角
 
@@ -282,7 +281,7 @@ import { ConfigProvider } from '@antdv-next/antdv-next'
   响应式内边距
 </div>
 
-<div class="grid grid-cols-1 gap-sm md:grid-cols-2 md:gap-md lg:grid-cols-3 lg:gap-lg">
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
   <div>项目 1</div>
   <div>项目 2</div>
   <div>项目 3</div>
@@ -411,7 +410,7 @@ createAntdPlugin({ antPrefix: 'my-app' })
 
 ### Q: 可以与其他 Tailwind 插件一起使用吗？
 
-A: 可以！此插件只扩展主题，不会与其他插件冲突：
+A: 可以！此插件会扩展主题并添加 `p-*` / `m-*` 工具类，仍可与其他插件一起使用：
 
 ```js
 export default {

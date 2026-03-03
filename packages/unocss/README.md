@@ -33,7 +33,6 @@ export default defineConfig({
 
 **Theme Keys:**
 - `colors` - Color palette
-- `spacing` - Padding/Margin values
 - `borderRadius` - Border radius values
 - `fontSize` - Font size values
 - `boxShadow` - Shadow values
@@ -59,7 +58,6 @@ export default defineConfig({
 
 **Theme Keys (Tailwind 4 style):**
 - `colors` - Color palette
-- `spacing` - Unified spacing (replaces separate width/height/padding/margin)
 - `radius` - Border radius (renamed from `borderRadius`)
 - `text` - Text configuration (includes fontSize, lineHeight, letterSpacing)
 - `shadow` - Box shadow (renamed from `boxShadow`)
@@ -101,6 +99,8 @@ Both presets support the same utility class patterns:
   <div class="a-text-lg a-color-primary">Large Text</div>
 </template>
 ```
+
+> Note: this preset only customizes `m-*` / `p-*` related classes and does not override UnoCSS global spacing scale (`w-*`, `max-w-*`, `gap-*`, etc.).
 
 ## When to Use Which?
 
@@ -155,7 +155,7 @@ Both presets support the same utility class patterns:
 - Border: `border`, `border-sec`
 - Palette: `blue`, `purple`, `cyan`, `green`, `magenta`, `pink`, `red`, `orange`, `yellow`, `volcano`, `geekblue`, `lime`, `gold` (with 1-10 levels)
 
-### Spacing
+### Spacing (for `m-*` / `p-*`)
 `xxs`, `xs`, `sm`, `md`, `lg`, `xl`
 
 ### Border Radius / Radius

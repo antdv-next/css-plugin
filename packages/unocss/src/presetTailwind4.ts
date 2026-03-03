@@ -6,7 +6,6 @@ import {
   buildPalettes,
   buildRadiusTheme,
   buildShadowTheme,
-  buildSpacingTheme,
   buildTextTheme,
   createAutocompleteTemplates,
   createBorderRules,
@@ -32,7 +31,6 @@ export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Op
     name: 'preset-antd-tailwind4',
     theme: {
       colors: buildColorsTheme(antPrefix, builtPalettes),
-      spacing: buildSpacingTheme(antPrefix),
       radius: buildRadiusTheme(antPrefix),
       text: buildTextTheme(antPrefix),
       shadow: buildShadowTheme(antPrefix),
@@ -45,14 +43,14 @@ export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Op
       // 带前缀的规则 (如 a-mx-lg)
       ...createColorRules(prefix),
       ...createBorderRules(prefix),
-      ...createSpacingRules(prefix),
+      ...createSpacingRules(prefix, antPrefix),
       ...createTextRules(prefix, 'text'),
       ...createRoundedRules(prefix, 'radius'),
       ...createShadowRules(prefix, 'shadow'),
       // 不带前缀的规则 (如 mx-lg)
       ...createColorRules(''),
       ...createBorderRules(''),
-      ...createSpacingRules(''),
+      ...createSpacingRules('', antPrefix),
       ...createTextRules('', 'text'),
       ...createRoundedRules('', 'radius'),
       ...createShadowRules('', 'shadow'),

@@ -147,17 +147,15 @@ export default {
 <div class="p-xxs">4px padding</div>
 <div class="p-xs">8px padding</div>
 <div class="p-sm">12px padding</div>
-<div class="p">16px padding</div>
 <div class="p-md">20px padding</div>
 <div class="p-lg">24px padding</div>
 <div class="p-xl">32px padding</div>
 
 <!-- Margin -->
 <div class="m-lg">24px margin</div>
-
-<!-- Gap -->
-<div class="gap-md">20px gap</div>
 ```
+
+> Note: both v3 and v4 no longer override Tailwind global spacing scale, so classes like `max-w-md` and `gap-*` keep Tailwind defaults.
 
 ### Border Radius
 
@@ -271,7 +269,7 @@ createAntdPlugin({ antPrefix: 'my-app' })
 
 ### Q: 可以与其他 Tailwind 插件一起使用吗？
 
-A: 可以！此插件只扩展主题，不会与其他插件冲突：
+A: 可以！此插件会扩展主题并添加 `p-*` / `m-*` 工具类，仍可与其他插件一起使用：
 
 ```js
 export default {

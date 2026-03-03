@@ -82,84 +82,71 @@ export function createBorderRules(prefix: string) {
 /**
  * 创建间距规则（Margin / Padding）
  */
-export function createSpacingRules(prefix: string) {
+const spacingTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'] as const
+const spacingTokenPattern = `(${spacingTokens.join('|')})`
+
+function getPaddingVar(antPrefix: string, token: string) {
+  return `var(--${antPrefix}-padding-${token})`
+}
+
+function getMarginVar(antPrefix: string, token: string) {
+  return `var(--${antPrefix}-margin-${token})`
+}
+
+export function createSpacingRules(prefix: string, antPrefix: string) {
   const p = prefix ? `${prefix}-` : ''
   
   return [
     // --- Margin ---
     // ${prefix}-m-sm -> margin: 12px (var)
-    [new RegExp(`^${p}m-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { margin: v }
+    [new RegExp(`^${p}m-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      return { margin: getMarginVar(antPrefix, s) }
     }],
     // ${prefix}-mt-lg -> margin-top: 24px (var)
-    [new RegExp(`^${p}mt-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'margin-top': v }
+    [new RegExp(`^${p}mt-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      return { 'margin-top': getMarginVar(antPrefix, s) }
     }],
-    [new RegExp(`^${p}mb-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'margin-bottom': v }
+    [new RegExp(`^${p}mb-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      return { 'margin-bottom': getMarginVar(antPrefix, s) }
     }],
-    [new RegExp(`^${p}ml-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'margin-left': v }
+    [new RegExp(`^${p}ml-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      return { 'margin-left': getMarginVar(antPrefix, s) }
     }],
-    [new RegExp(`^${p}mr-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'margin-right': v }
+    [new RegExp(`^${p}mr-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      return { 'margin-right': getMarginVar(antPrefix, s) }
     }],
-    [new RegExp(`^${p}mx-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'margin-left': v, 'margin-right': v }
+    [new RegExp(`^${p}mx-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      const v = getMarginVar(antPrefix, s)
+      return { 'margin-left': v, 'margin-right': v }
     }],
-    [new RegExp(`^${p}my-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'margin-top': v, 'margin-bottom': v }
+    [new RegExp(`^${p}my-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      const v = getMarginVar(antPrefix, s)
+      return { 'margin-top': v, 'margin-bottom': v }
     }],
 
     // --- Padding ---
-    [new RegExp(`^${p}p-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { padding: v }
+    [new RegExp(`^${p}p-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      return { padding: getPaddingVar(antPrefix, s) }
     }],
-    [new RegExp(`^${p}pt-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'padding-top': v }
+    [new RegExp(`^${p}pt-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      return { 'padding-top': getPaddingVar(antPrefix, s) }
     }],
-    [new RegExp(`^${p}pb-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'padding-bottom': v }
+    [new RegExp(`^${p}pb-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      return { 'padding-bottom': getPaddingVar(antPrefix, s) }
     }],
-    [new RegExp(`^${p}pl-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'padding-left': v }
+    [new RegExp(`^${p}pl-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      return { 'padding-left': getPaddingVar(antPrefix, s) }
     }],
-    [new RegExp(`^${p}pr-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'padding-right': v }
+    [new RegExp(`^${p}pr-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      return { 'padding-right': getPaddingVar(antPrefix, s) }
     }],
-    [new RegExp(`^${p}px-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'padding-left': v, 'padding-right': v }
+    [new RegExp(`^${p}px-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      const v = getPaddingVar(antPrefix, s)
+      return { 'padding-left': v, 'padding-right': v }
     }],
-    [new RegExp(`^${p}py-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme.spacing as any)?.[s!]
-      if (v)
-        return { 'padding-top': v, 'padding-bottom': v }
+    [new RegExp(`^${p}py-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
+      const v = getPaddingVar(antPrefix, s)
+      return { 'padding-top': v, 'padding-bottom': v }
     }],
   ]
 }

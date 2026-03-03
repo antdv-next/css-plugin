@@ -33,7 +33,6 @@ export default defineConfig({
 
 **主题键名：**
 - `colors` - 颜色调色板
-- `spacing` - 内外边距值
 - `borderRadius` - 边框圆角值
 - `fontSize` - 字体大小值
 - `boxShadow` - 阴影值
@@ -59,7 +58,6 @@ export default defineConfig({
 
 **主题键名（Tailwind 4 风格）：**
 - `colors` - 颜色调色板
-- `spacing` - 统一间距（取代独立的 width/height/padding/margin）
 - `radius` - 边框圆角（从 `borderRadius` 重命名）
 - `text` - 文本配置（包含 fontSize、lineHeight、letterSpacing）
 - `shadow` - 盒阴影（从 `boxShadow` 重命名）
@@ -101,6 +99,8 @@ export default defineConfig({
   <div class="a-text-lg a-color-primary">大号文字</div>
 </template>
 ```
+
+> 注意：该预设仅自定义 `m-*` / `p-*` 相关类，不会覆盖 UnoCSS 全局 spacing（`w-*`、`max-w-*`、`gap-*` 等保持默认行为）。
 
 ## 如何选择？
 
@@ -155,7 +155,7 @@ export default defineConfig({
 - 边框：`border`、`border-sec`
 - 调色板：`blue`、`purple`、`cyan`、`green`、`magenta`、`pink`、`red`、`orange`、`yellow`、`volcano`、`geekblue`、`lime`、`gold`（带 1-10 级）
 
-### 间距
+### 间距（用于 `m-*` / `p-*`）
 `xxs`、`xs`、`sm`、`md`、`lg`、`xl`
 
 ### 边框圆角 / Radius

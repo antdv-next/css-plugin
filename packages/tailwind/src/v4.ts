@@ -11,12 +11,50 @@
 import type { AntdPluginOptions } from './types'
 import { colorNames } from './types'
 
+const spacingTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'] as const
+
+const paddingUtilityConfig = [
+  ['p', 'padding'],
+  ['px', 'padding-inline'],
+  ['py', 'padding-block'],
+  ['pt', 'padding-top'],
+  ['pr', 'padding-right'],
+  ['pb', 'padding-bottom'],
+  ['pl', 'padding-left'],
+] as const
+
+const marginUtilityConfig = [
+  ['m', 'margin'],
+  ['mx', 'margin-inline'],
+  ['my', 'margin-block'],
+  ['mt', 'margin-top'],
+  ['mr', 'margin-right'],
+  ['mb', 'margin-bottom'],
+  ['ml', 'margin-left'],
+] as const
+
+function pushDirectionalSpacingUtilities(
+  lines: string[],
+  variableNamespace: 'padding' | 'margin',
+  utilityConfig: ReadonlyArray<readonly [string, string]>,
+): void {
+  for (const [utilityName, cssProperty] of utilityConfig) {
+    for (const token of spacingTokens) {
+      lines.push(`@utility ${utilityName}-${token} {`)
+      lines.push(`  ${cssProperty}: var(--${variableNamespace}-${token});`)
+      lines.push('}')
+    }
+    lines.push('')
+  }
+}
+
 /**
  * 生成 Tailwind CSS v4 主题 CSS 内容
  *
  * Tailwind v4 使用 @theme 指令定义主题变量，变量命名约定：
  * - --color-*: 颜色工具类 (bg-*, text-*, border-*)
- * - --spacing-*: 间距工具类 (p-*, m-*, gap-*)
+ * - --padding-*: padding 工具类 (p-*, px-*, py-*)
+ * - --margin-*: margin 工具类 (m-*, mx-*, my-*)
  * - --radius-*: 圆角工具类 (rounded-*)
  * - --text-*: 字体大小工具类 (text-sm, text-lg)
  * - --shadow-*: 阴影工具类 (shadow-*)
@@ -110,18 +148,18 @@ export function generateThemeCSS(options: AntdPluginOptions = {}): string {
   lines.push(`  --color-border-secondary: var(--${antPrefix}-color-border-secondary);`)
   lines.push(`  --color-border-sec: var(--${antPrefix}-color-border-secondary);`)
 
-  // 间距变量 --spacing-*
+  // 间距变量（拆分 padding / margin，避免污染 max-w-md 等 spacing 相关工具类）
   lines.push('')
-  lines.push('  /* Spacing */')
-  lines.push(`  --spacing-xxs: var(--${antPrefix}-padding-xxs);`)
-  lines.push(`  --spacing-xs: var(--${antPrefix}-padding-xs);`)
-  lines.push(`  --spacing-sm: var(--${antPrefix}-padding-sm);`)
-  // 不生成 --spacing-DEFAULT，避免出现 p-DEFAULT / m-DEFAULT 等无意义工具类
-  lines.push(`  --spacing-md: var(--${antPrefix}-padding-md);`)
-  lines.push(`  --spacing-lg: var(--${antPrefix}-padding-lg);`)
-  lines.push(`  --spacing-xl: var(--${antPrefix}-padding-xl);`)
-  lines.push(`  --spacing-xxl: var(--${antPrefix}-padding-xxl);`)
-  lines.push(`  --spacing-xxxl: var(--${antPrefix}-padding-xxxl);`)
+  lines.push('  /* Padding Tokens */')
+  for (const token of spacingTokens) {
+    lines.push(`  --padding-${token}: var(--${antPrefix}-padding-${token});`)
+  }
+
+  lines.push('')
+  lines.push('  /* Margin Tokens */')
+  for (const token of spacingTokens) {
+    lines.push(`  --margin-${token}: var(--${antPrefix}-margin-${token});`)
+  }
 
   // 圆角变量 --radius-*
   lines.push('')
@@ -162,6 +200,11 @@ export function generateThemeCSS(options: AntdPluginOptions = {}): string {
   lines.push(`  --shadow-drawer-d: var(--${antPrefix}-box-shadow-drawer-down);`)
 
   lines.push('}')
+  lines.push('')
+  lines.push('/* Padding Utilities */')
+  pushDirectionalSpacingUtilities(lines, 'padding', paddingUtilityConfig)
+  lines.push('/* Margin Utilities */')
+  pushDirectionalSpacingUtilities(lines, 'margin', marginUtilityConfig)
 
   return lines.join('\n')
 }

@@ -12,8 +12,54 @@ import {
   buildColorsTheme,
   buildFontSizeTheme,
   buildShadowTheme,
-  buildSpacingTheme,
 } from './theme'
+
+const spacingTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'] as const
+
+const paddingUtilityConfig = [
+  ['p', ['padding']],
+  ['px', ['padding-left', 'padding-right']],
+  ['py', ['padding-top', 'padding-bottom']],
+  ['pt', ['padding-top']],
+  ['pr', ['padding-right']],
+  ['pb', ['padding-bottom']],
+  ['pl', ['padding-left']],
+] as const
+
+const marginUtilityConfig = [
+  ['m', ['margin']],
+  ['mx', ['margin-left', 'margin-right']],
+  ['my', ['margin-top', 'margin-bottom']],
+  ['mt', ['margin-top']],
+  ['mr', ['margin-right']],
+  ['mb', ['margin-bottom']],
+  ['ml', ['margin-left']],
+] as const
+
+function buildSpacingUtilities(antPrefix: string) {
+  const utilities: Record<string, Record<string, string>> = {}
+
+  for (const token of spacingTokens) {
+    const paddingValue = `var(--${antPrefix}-padding-${token})`
+    const marginValue = `var(--${antPrefix}-margin-${token})`
+
+    for (const [utilityName, cssProperties] of paddingUtilityConfig) {
+      const selector = `.${utilityName}-${token}`
+      utilities[selector] = utilities[selector] || {}
+      for (const cssProperty of cssProperties)
+        utilities[selector][cssProperty] = paddingValue
+    }
+
+    for (const [utilityName, cssProperties] of marginUtilityConfig) {
+      const selector = `.${utilityName}-${token}`
+      utilities[selector] = utilities[selector] || {}
+      for (const cssProperty of cssProperties)
+        utilities[selector][cssProperty] = marginValue
+    }
+  }
+
+  return utilities
+}
 
 /**
  * 创建 Ant Design Vue Tailwind CSS 插件
@@ -43,16 +89,15 @@ export function createAntdPlugin(options: AntdPluginOptions = {}) {
 
   return plugin(
     // 插件函数 - 用于添加自定义 utilities, components 等
-    () => {
-      // 当前不需要添加额外的 utilities
-      // 如果需要添加自定义样式，可以在这里使用 addUtilities, addComponents 等 API
+    ({ addUtilities }) => {
+      // 仅注入 padding / margin，避免污染 max-w-* / w-* / gap-* 等依赖 spacing 的工具类
+      addUtilities(buildSpacingUtilities(antPrefix))
     },
     // 主题配置 - 扩展 Tailwind 的默认主题
     {
       theme: {
         extend: {
           colors: buildColorsTheme(antPrefix, builtPalettes),
-          spacing: buildSpacingTheme(antPrefix),
           borderRadius: buildBorderRadiusTheme(antPrefix),
           fontSize: buildFontSizeTheme(antPrefix),
           boxShadow: buildShadowTheme(antPrefix),

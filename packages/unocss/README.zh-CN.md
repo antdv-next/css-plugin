@@ -25,6 +25,7 @@ export default defineConfig({
   presets: [
     presetAntd({
       prefix: 'a',      // class 前缀，默认: 'a'
+      allowUnprefixed: true, // 支持 color-primary 这类无前缀类名，默认: true
       antPrefix: 'ant', // CSS 变量前缀，默认: 'ant'
     }),
   ],
@@ -50,6 +51,7 @@ export default defineConfig({
   presets: [
     presetAntdTailwind4({
       prefix: 'a',      // class 前缀，默认: 'a'
+      allowUnprefixed: true, // 支持 color-primary 这类无前缀类名，默认: true
       antPrefix: 'ant', // CSS 变量前缀，默认: 'ant'
     }),
   ],

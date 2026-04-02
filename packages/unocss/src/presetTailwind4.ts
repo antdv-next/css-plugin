@@ -22,6 +22,7 @@ export interface AntdPresetTailwind4Options extends BasePresetOptions {}
 
 export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Options): Preset => {
   const prefix = options?.prefix || 'a'
+  const allowUnprefixed = options?.allowUnprefixed ?? true
   const antPrefix = options?.antPrefix || 'ant'
 
   // 根据 antPrefix 动态生成调色板
@@ -38,7 +39,7 @@ export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Op
       defaults: {},
     },
 
-    // 自定义规则 - 同时支持带前缀和不带前缀的写法
+    // 自定义规则
     rules: ([
       // 带前缀的规则 (如 a-mx-lg)
       ...createColorRules(prefix),
@@ -47,17 +48,22 @@ export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Op
       ...createTextRules(prefix, 'text'),
       ...createRoundedRules(prefix, 'radius'),
       ...createShadowRules(prefix, 'shadow'),
-      // 不带前缀的规则 (如 mx-lg)
-      ...createColorRules(''),
-      ...createBorderRules(''),
-      ...createSpacingRules('', antPrefix),
-      ...createTextRules('', 'text'),
-      ...createRoundedRules('', 'radius'),
-      ...createShadowRules('', 'shadow'),
+      // 可选的不带前缀规则 (如 mx-lg)
+      ...(allowUnprefixed
+        ? [
+            ...createColorRules(''),
+            ...createBorderRules(''),
+            ...createSpacingRules('', antPrefix),
+            ...createTextRules('', 'text'),
+            ...createRoundedRules('', 'radius'),
+            ...createShadowRules('', 'shadow'),
+          ]
+        : []),
     ] as any),
     autocomplete: {
       templates: createAutocompleteTemplates({
         prefix,
+        allowUnprefixed,
         themeKeys: {
           rounded: 'radius',
           shadow: 'shadow',

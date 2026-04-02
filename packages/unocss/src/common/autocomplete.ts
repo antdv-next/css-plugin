@@ -6,6 +6,7 @@ import { colorNames } from './types'
 
 export interface AutocompleteOptions {
   prefix: string
+  allowUnprefixed?: boolean
   themeKeys: {
     rounded: 'borderRadius' | 'radius'
     shadow: 'boxShadow' | 'shadow'
@@ -119,12 +120,12 @@ function createTemplatesForPrefix(prefix: string, themeKeys: AutocompleteOptions
  * 创建自动补全模板（同时支持带前缀和不带前缀）
  */
 export function createAutocompleteTemplates(options: AutocompleteOptions) {
-  const { prefix, themeKeys } = options
+  const { prefix, allowUnprefixed = true, themeKeys } = options
 
   return [
     // 带前缀的模板 (如 a-mx-lg)
     ...createTemplatesForPrefix(prefix, themeKeys),
     // 不带前缀的模板 (如 mx-lg)
-    ...createTemplatesForPrefix('', themeKeys),
+    ...(allowUnprefixed ? createTemplatesForPrefix('', themeKeys) : []),
   ]
 }

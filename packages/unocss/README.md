@@ -25,6 +25,7 @@ export default defineConfig({
   presets: [
     presetAntd({
       prefix: 'a',      // class prefix, default: 'a'
+      allowUnprefixed: true, // support color-primary style classes, default: true
       antPrefix: 'ant', // CSS variable prefix, default: 'ant'
     }),
   ],
@@ -50,6 +51,7 @@ export default defineConfig({
   presets: [
     presetAntdTailwind4({
       prefix: 'a',      // class prefix, default: 'a'
+      allowUnprefixed: true, // support color-primary style classes, default: true
       antPrefix: 'ant', // CSS variable prefix, default: 'ant'
     }),
   ],

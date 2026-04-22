@@ -33,10 +33,13 @@ describe('presetAntd', () => {
 
   it('can disable unprefixed utilities', () => {
     const preset = presetAntd({ allowUnprefixed: false })
+    const colors = (preset.theme as { colors?: Record<string, string> })?.colors
 
     expect(hasMatchingRule(preset.rules as any[], 'a-color-primary')).toBe(true)
     expect(hasMatchingRule(preset.rules as any[], 'color-primary')).toBe(false)
     expect(hasUnprefixedAutocomplete(preset.autocomplete?.templates as string[])).toBe(false)
+    expect(colors?.primary).toBeUndefined()
+    expect(colors?.['a-primary']).toBeDefined()
   })
 })
 
@@ -50,9 +53,12 @@ describe('presetAntdTailwind4', () => {
 
   it('can disable unprefixed utilities', () => {
     const preset = presetAntdTailwind4({ allowUnprefixed: false })
+    const colors = (preset.theme as { colors?: Record<string, string> })?.colors
 
     expect(hasMatchingRule(preset.rules as any[], 'a-color-primary')).toBe(true)
     expect(hasMatchingRule(preset.rules as any[], 'color-primary')).toBe(false)
     expect(hasUnprefixedAutocomplete(preset.autocomplete?.templates as string[])).toBe(false)
+    expect(colors?.primary).toBeUndefined()
+    expect(colors?.['a-primary']).toBeDefined()
   })
 })

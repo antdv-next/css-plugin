@@ -7,6 +7,7 @@ import {
   buildFontSizeTheme,
   buildPalettes,
   buildShadowTheme,
+  withThemeTokenPrefix,
   createAutocompleteTemplates,
   createBorderRules,
   createColorRules,
@@ -24,6 +25,7 @@ export const presetAntd = definePreset((options?: AntdPresetOptions): Preset => 
   const prefix = options?.prefix || 'a'
   const allowUnprefixed = options?.allowUnprefixed ?? true
   const antPrefix = options?.antPrefix || 'ant'
+  const themeTokenPrefix = allowUnprefixed ? undefined : prefix
 
   // 根据 antPrefix 动态生成调色板
   const builtPalettes = buildPalettes(antPrefix)
@@ -31,21 +33,21 @@ export const presetAntd = definePreset((options?: AntdPresetOptions): Preset => 
   return {
     name: 'preset-antd',
     theme: {
-      colors: buildColorsTheme(antPrefix, builtPalettes),
-      borderRadius: buildBorderRadiusTheme(antPrefix),
-      fontSize: buildFontSizeTheme(antPrefix),
-      boxShadow: buildShadowTheme(antPrefix),
+      colors: withThemeTokenPrefix(buildColorsTheme(antPrefix, builtPalettes), themeTokenPrefix),
+      borderRadius: withThemeTokenPrefix(buildBorderRadiusTheme(antPrefix), themeTokenPrefix),
+      fontSize: withThemeTokenPrefix(buildFontSizeTheme(antPrefix), themeTokenPrefix),
+      boxShadow: withThemeTokenPrefix(buildShadowTheme(antPrefix), themeTokenPrefix),
     },
 
     // 自定义规则
     rules: ([
       // 带前缀的规则 (如 a-mx-lg)
-      ...createColorRules(prefix),
-      ...createBorderRules(prefix),
+      ...createColorRules(prefix, themeTokenPrefix),
+      ...createBorderRules(prefix, themeTokenPrefix),
       ...createSpacingRules(prefix, antPrefix),
-      ...createTextRules(prefix, 'fontSize'),
-      ...createRoundedRules(prefix, 'borderRadius'),
-      ...createShadowRules(prefix, 'boxShadow'),
+      ...createTextRules(prefix, 'fontSize', themeTokenPrefix),
+      ...createRoundedRules(prefix, 'borderRadius', themeTokenPrefix),
+      ...createShadowRules(prefix, 'boxShadow', themeTokenPrefix),
       // 可选的不带前缀规则 (如 mx-lg)
       ...(allowUnprefixed
         ? [

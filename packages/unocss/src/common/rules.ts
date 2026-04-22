@@ -2,23 +2,30 @@
  * 规则生成函数
  */
 
+function resolveThemeTokenKey(token: string, themeTokenPrefix?: string) {
+  if (!themeTokenPrefix)
+    return token
+
+  return `${themeTokenPrefix}-${token}`
+}
+
 /**
  * 创建颜色类规则
  */
-export function createColorRules(prefix: string) {
+export function createColorRules(prefix: string, themeTokenPrefix?: string) {
   const p = prefix ? `${prefix}-` : ''
   
   return [
     // ${prefix}-color-primary 或 ${prefix}-c-primary -> color: var(--${antPrefix}-color-primary)
     [new RegExp(`^${p}(?:color|c)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[c!]
+      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
       if (color)
         return { color }
     }],
 
     // ${prefix}-bg-container -> background-color: var(--${antPrefix}-color-bg-container)
     [new RegExp(`^${p}bg-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[c!]
+      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
       if (color)
         return { 'background-color': color }
     }],
@@ -28,51 +35,51 @@ export function createColorRules(prefix: string) {
 /**
  * 创建边框颜色规则
  */
-export function createBorderRules(prefix: string) {
+export function createBorderRules(prefix: string, themeTokenPrefix?: string) {
   const p = prefix ? `${prefix}-` : ''
   
   return [
     // ${prefix}-border 或 ${prefix}-b -> border-color: var(--${antPrefix}-color-border) (DEFAULT)
     [new RegExp(`^${p}(?:border|b)$`), (_: any, { theme }: any) => {
-      const color = (theme.colors as any)?.border
+      const color = (theme.colors as any)?.[resolveThemeTokenKey('border', themeTokenPrefix)]
       if (color)
         return { 'border-color': color }
     }],
     // ${prefix}-border-primary 或 ${prefix}-b-primary -> border-color: ...
     [new RegExp(`^${p}(?:border|b)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[c!]
+      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
       if (color)
         return { 'border-color': color }
     }],
     // 方向性 border: bt/border-t, br/border-r, bb/border-b, bl/border-l
     [new RegExp(`^${p}(?:border-t|bt)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[c!]
+      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
       if (color)
         return { 'border-top-color': color }
     }],
     [new RegExp(`^${p}(?:border-r|br)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[c!]
+      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
       if (color)
         return { 'border-right-color': color }
     }],
     [new RegExp(`^${p}(?:border-b|bb)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[c!]
+      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
       if (color)
         return { 'border-bottom-color': color }
     }],
     [new RegExp(`^${p}(?:border-l|bl)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[c!]
+      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
       if (color)
         return { 'border-left-color': color }
     }],
     // 双向 border: bx/border-x, by/border-y
     [new RegExp(`^${p}(?:border-x|bx)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[c!]
+      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
       if (color)
         return { 'border-left-color': color, 'border-right-color': color }
     }],
     [new RegExp(`^${p}(?:border-y|by)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[c!]
+      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
       if (color)
         return { 'border-top-color': color, 'border-bottom-color': color }
     }],
@@ -156,19 +163,20 @@ export function createSpacingRules(prefix: string, antPrefix: string) {
  * @param prefix class 前缀
  * @param themeKey 主题键名，'fontSize' 或 'text'
  */
-export function createTextRules(prefix: string, themeKey: 'fontSize' | 'text' = 'fontSize') {
+export function createTextRules(prefix: string, themeKey: 'fontSize' | 'text' = 'fontSize', themeTokenPrefix?: string) {
   const p = prefix ? `${prefix}-` : ''
   
   return [
     // ${prefix}-text-lg -> font-size: 16px (var)
     [new RegExp(`^${p}text-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
+      const key = resolveThemeTokenKey(s!, themeTokenPrefix)
       if (themeKey === 'fontSize') {
-        const v = (theme.fontSize as any)?.[s!]
+        const v = (theme.fontSize as any)?.[key]
         if (v)
           return { 'font-size': v }
       }
       else {
-        const textConfig = (theme.text as any)?.[s!]
+        const textConfig = (theme.text as any)?.[key]
         if (textConfig?.fontSize) {
           return { 'font-size': textConfig.fontSize }
         }
@@ -182,61 +190,61 @@ export function createTextRules(prefix: string, themeKey: 'fontSize' | 'text' = 
  * @param prefix class 前缀
  * @param themeKey 主题键名，'borderRadius' 或 'radius'
  */
-export function createRoundedRules(prefix: string, themeKey: 'borderRadius' | 'radius' = 'borderRadius') {
+export function createRoundedRules(prefix: string, themeKey: 'borderRadius' | 'radius' = 'borderRadius', themeTokenPrefix?: string) {
   const p = prefix ? `${prefix}-` : ''
   
   return [
     // ${prefix}-rounded -> border-radius: var(--${antPrefix}-border-radius) (DEFAULT)
     [new RegExp(`^${p}(?:rounded|rd)$`), (_: any, { theme }: any) => {
-      const v = (theme[themeKey] as any)?.DEFAULT
+      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey('DEFAULT', themeTokenPrefix)]
       if (v)
         return { 'border-radius': v }
     }],
     // ${prefix}-rounded-sm 或 ${prefix}-rd-sm -> border-radius: 4px (var)
     [new RegExp(`^${p}(?:rounded|rd)-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[s!]
+      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s!, themeTokenPrefix)]
       if (v)
         return { 'border-radius': v }
     }],
     // 角落圆角: rounded-tl, rounded-tr, rounded-bl, rounded-br (简写: rd-tl, rd-tr, rd-bl, rd-br)
     [new RegExp(`^${p}(?:rounded|rd)-tl(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[s || 'DEFAULT']
+      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
       if (v)
         return { 'border-top-left-radius': v }
     }],
     [new RegExp(`^${p}(?:rounded|rd)-tr(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[s || 'DEFAULT']
+      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
       if (v)
         return { 'border-top-right-radius': v }
     }],
     [new RegExp(`^${p}(?:rounded|rd)-bl(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[s || 'DEFAULT']
+      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
       if (v)
         return { 'border-bottom-left-radius': v }
     }],
     [new RegExp(`^${p}(?:rounded|rd)-br(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[s || 'DEFAULT']
+      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
       if (v)
         return { 'border-bottom-right-radius': v }
     }],
     // 边侧圆角: rounded-t, rounded-r, rounded-b, rounded-l (简写: rd-t, rd-r, rd-b, rd-l)
     [new RegExp(`^${p}(?:rounded|rd)-t(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[s || 'DEFAULT']
+      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
       if (v)
         return { 'border-top-left-radius': v, 'border-top-right-radius': v }
     }],
     [new RegExp(`^${p}(?:rounded|rd)-r(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[s || 'DEFAULT']
+      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
       if (v)
         return { 'border-top-right-radius': v, 'border-bottom-right-radius': v }
     }],
     [new RegExp(`^${p}(?:rounded|rd)-b(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[s || 'DEFAULT']
+      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
       if (v)
         return { 'border-bottom-left-radius': v, 'border-bottom-right-radius': v }
     }],
     [new RegExp(`^${p}(?:rounded|rd)-l(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[s || 'DEFAULT']
+      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
       if (v)
         return { 'border-top-left-radius': v, 'border-bottom-left-radius': v }
     }],
@@ -248,7 +256,7 @@ export function createRoundedRules(prefix: string, themeKey: 'borderRadius' | 'r
  * @param prefix class 前缀
  * @param themeKey 主题键名，'boxShadow' 或 'shadow'
  */
-export function createShadowRules(prefix: string, themeKey: 'boxShadow' | 'shadow' = 'boxShadow') {
+export function createShadowRules(prefix: string, themeKey: 'boxShadow' | 'shadow' = 'boxShadow', themeTokenPrefix?: string) {
   const p = prefix ? `${prefix}-` : ''
   
   return [
@@ -256,7 +264,7 @@ export function createShadowRules(prefix: string, themeKey: 'boxShadow' | 'shado
       new RegExp(`^${p}shadow(?:-(.+))?$`),
       ([_, s]: [any, any], { theme }: any) => {
         // 如果 s 存在(有后缀)，用 s；如果 s 不存在(没后缀)，用 'DEFAULT'
-        const key = s || 'DEFAULT'
+        const key = resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)
         const v = (theme[themeKey] as any)?.[key]
 
         if (v)

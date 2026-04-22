@@ -2,6 +2,15 @@
  * 主题配置生成函数
  */
 
+export function withThemeTokenPrefix<T>(theme: Record<string, T>, tokenPrefix: string | undefined) {
+  if (!tokenPrefix)
+    return theme
+
+  return Object.fromEntries(
+    Object.entries(theme).map(([key, value]) => [`${tokenPrefix}-${key}`, value]),
+  ) as Record<string, T>
+}
+
 /**
  * 构建颜色主题
  */

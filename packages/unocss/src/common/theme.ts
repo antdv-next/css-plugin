@@ -126,43 +126,50 @@ export function buildRadiusTheme(antPrefix: string) {
 
 /**
  * 构建字体大小主题（Wind3 风格）
+ *
+ * 键名使用 `ant-*` 前缀，避免与 UnoCSS/Tailwind 内置的 rem 体系冲突
+ * （例如内置的 text-sm → 0.875rem 不会被覆盖）。
+ * 用法：`a-text-ant-sm`（带前缀）或 `text-ant-sm`（allowUnprefixed: true）。
  */
 export function buildFontSizeTheme(antPrefix: string) {
   return {
-    sm: `var(--${antPrefix}-font-size-sm)`,
-    DEFAULT: `var(--${antPrefix}-font-size)`,
-    lg: `var(--${antPrefix}-font-size-lg)`,
-    xl: `var(--${antPrefix}-font-size-xl)`,
-    h1: `var(--${antPrefix}-font-size-heading-1)`,
-    h2: `var(--${antPrefix}-font-size-heading-2)`,
-    h3: `var(--${antPrefix}-font-size-heading-3)`,
+    'ant-sm': `var(--${antPrefix}-font-size-sm)`,
+    'ant-base': `var(--${antPrefix}-font-size)`,
+    'ant-lg': `var(--${antPrefix}-font-size-lg)`,
+    'ant-xl': `var(--${antPrefix}-font-size-xl)`,
+    'ant-h1': `var(--${antPrefix}-font-size-heading-1)`,
+    'ant-h2': `var(--${antPrefix}-font-size-heading-2)`,
+    'ant-h3': `var(--${antPrefix}-font-size-heading-3)`,
   }
 }
 
 /**
  * 构建文本主题（Tailwind 4 风格 - text）
+ *
+ * 键名使用 `ant-*` 前缀，避免与 UnoCSS/Tailwind 内置的 rem 体系冲突。
+ * 用法：`a-text-ant-sm`（带前缀）或 `text-ant-sm`（allowUnprefixed: true）。
  */
 export function buildTextTheme(antPrefix: string) {
   return {
-    sm: {
+    'ant-sm': {
       fontSize: `var(--${antPrefix}-font-size-sm)`,
     },
-    DEFAULT: {
+    'ant-base': {
       fontSize: `var(--${antPrefix}-font-size)`,
     },
-    lg: {
+    'ant-lg': {
       fontSize: `var(--${antPrefix}-font-size-lg)`,
     },
-    xl: {
+    'ant-xl': {
       fontSize: `var(--${antPrefix}-font-size-xl)`,
     },
-    h1: {
+    'ant-h1': {
       fontSize: `var(--${antPrefix}-font-size-heading-1)`,
     },
-    h2: {
+    'ant-h2': {
       fontSize: `var(--${antPrefix}-font-size-heading-2)`,
     },
-    h3: {
+    'ant-h3': {
       fontSize: `var(--${antPrefix}-font-size-heading-3)`,
     },
   }

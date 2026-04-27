@@ -29,8 +29,8 @@ const SPACING_ENUM = '(xxs|xs|sm|md|lg|xl|xxl|xxxl)'
 const SEMANTIC_COLORS = 'primary|primary-hover|primary-active|primary-bg|primary-bg-hover|success|success-bg|success-border|success-hover|warning|warning-bg|warning-border|warning-hover|error|error-bg|error-border|error-hover|info|info-bg|info-border|link|link-hover|link-active|text|text-secondary|text-tertiary|text-quat|text-quaternary|fill|fill-secondary|fill-tertiary|fill-quaternary|white|base|container|layout|elevated|mask|main|sec|quat|split|border|border-sec'
 const COLOR_ENUM = `(${buildColorPaletteEnum()}|${SEMANTIC_COLORS})`
 const RADIUS_ENUM = '(xs|sm|lg)'
-const FONT_ENUM = '(sm|lg|xl|h1|h2|h3)'
-const TEXT_ENUM = '(sm|lg|xl|h1|h2|h3)'
+const FONT_ENUM = '(ant-sm|ant-base|ant-lg|ant-xl|ant-h1|ant-h2|ant-h3)'
+const TEXT_ENUM = '(ant-sm|ant-base|ant-lg|ant-xl|ant-h1|ant-h2|ant-h3)'
 const SHADOW_ENUM = '(sec|secondary|ter|tertiary|card|arrow|drawer-r|drawer-l|drawer-u|drawer-d|drawer-right|drawer-left|drawer-up|drawer-down)'
 
 /**

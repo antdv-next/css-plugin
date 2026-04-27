@@ -98,7 +98,7 @@ Both presets support the same utility class patterns:
   <div class="a-shadow-card">Card Shadow</div>
 
   <!-- Text -->
-  <div class="a-text-lg a-color-primary">Large Text</div>
+  <div class="a-text-ant-lg a-color-primary">Large Text</div>
 </template>
 ```
 
@@ -144,7 +144,10 @@ Both presets support the same utility class patterns:
 - `a-shadow-{type}` - Specific shadow type (card, drawer-r, etc.)
 
 ### Text Utilities
-- `a-text-{size}` - Font size (sm, lg, xl, h1, h2, h3)
+- `a-text-ant-{size}` - Font size mapped to Ant Design CSS variables (ant-sm, ant-base, ant-lg, ant-xl, ant-h1, ant-h2, ant-h3)
+
+> **Note:** Font-size keys use the `ant-*` prefix (e.g. `text-ant-sm`, `a-text-ant-lg`) to avoid overriding
+> the built-in UnoCSS/Tailwind rem-based scale (e.g. `text-sm → 0.875rem`). Both systems coexist without conflict.
 
 ## Available Theme Tokens
 
@@ -165,6 +168,9 @@ Both presets support the same utility class patterns:
 
 ### Shadow / BoxShadow
 `sec`/`secondary`, `ter`/`tertiary`, `card`, `arrow`, `drawer-r`, `drawer-l`, `drawer-u`, `drawer-d`
+
+### Font Size / Text
+`ant-sm`, `ant-base`, `ant-lg`, `ant-xl`, `ant-h1`, `ant-h2`, `ant-h3`
 
 ## License
 

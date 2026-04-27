@@ -61,7 +61,7 @@ Tailwind v4 的主题变量命名约定：
 | `--padding-*` | `p-lg`, `px-sm` | `--ant-padding-*` |
 | `--margin-*` | `m-lg`, `my-sm` | `--ant-margin-*` |
 | `--radius-*` | `rounded-lg` | `--ant-border-radius-*` |
-| `--text-*` | `text-h1` | `--ant-font-size-*` |
+| `--text-ant-*` | `text-ant-h1`, `text-ant-sm` | `--ant-font-size-*` |
 | `--shadow-*` | `shadow-card` | `--ant-box-shadow-*` |
 
 ### Tailwind v4 使用示例
@@ -69,7 +69,7 @@ Tailwind v4 的主题变量命名约定：
 ```vue
 <template>
   <div class="bg-primary text-white p-lg rounded-lg shadow-card">
-    <h1 class="text-h1 text-primary">你好 Ant Design Vue</h1>
+    <h1 class="text-ant-h1 text-primary">你好 Ant Design Vue</h1>
     <p class="text-text-secondary mt-sm">
       使用 Tailwind CSS v4 工具类
     </p>
@@ -118,7 +118,7 @@ export default {
 ```vue
 <template>
   <div class="bg-primary text-white p-lg rounded-lg shadow-card">
-    <h1 class="text-h1 text-primary">你好 Ant Design Vue</h1>
+    <h1 class="text-ant-h1 text-primary">你好 Ant Design Vue</h1>
     <p class="text-secondary mt-sm">
       使用 Tailwind CSS 工具类和 Ant Design Vue 设计系统
     </p>
@@ -194,13 +194,13 @@ export default {
 ### 字体
 
 ```html
-<div class="text-sm">小号文本</div>
-<div class="text">默认文本</div>
-<div class="text-lg">大号文本</div>
-<div class="text-xl">超大号文本</div>
-<div class="text-h1">一级标题</div>
-<div class="text-h2">二级标题</div>
-<div class="text-h3">三级标题</div>
+<div class="text-ant-sm">小号文本</div>
+<div class="text-ant-base">默认文本</div>
+<div class="text-ant-lg">大号文本</div>
+<div class="text-ant-xl">超大号文本</div>
+<div class="text-ant-h1">一级标题</div>
+<div class="text-ant-h2">二级标题</div>
+<div class="text-ant-h3">三级标题</div>
 ```
 
 ### 阴影

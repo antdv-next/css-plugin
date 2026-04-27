@@ -52,7 +52,7 @@ const customCss = generateThemeCSS({ antPrefix: 'my-app' })
 ```vue
 <template>
   <div class="bg-primary text-white p-lg rounded-lg shadow-card">
-    <h1 class="text-h1 text-primary">Hello Ant Design Vue</h1>
+    <h1 class="text-ant-h1 text-primary">Hello Ant Design Vue</h1>
     <p class="text-text-secondary mt-sm">
       使用 Tailwind CSS v4 工具类
     </p>
@@ -96,7 +96,7 @@ export default {
 ```vue
 <template>
   <div class="bg-primary text-white p-lg rounded-lg shadow-card">
-    <h1 class="text-h1 text-primary">Hello Ant Design Vue</h1>
+    <h1 class="text-ant-h1 text-primary">Hello Ant Design Vue</h1>
     <p class="text-secondary mt-sm">
       使用 Tailwind CSS 工具类和 Ant Design Vue 设计系统
     </p>
@@ -169,13 +169,13 @@ export default {
 ### Typography
 
 ```html
-<div class="text-sm">Small text</div>
-<div class="text">Default text</div>
-<div class="text-lg">Large text</div>
-<div class="text-xl">Extra large text</div>
-<div class="text-h1">Heading 1</div>
-<div class="text-h2">Heading 2</div>
-<div class="text-h3">Heading 3</div>
+<div class="text-ant-sm">Small text</div>
+<div class="text-ant-base">Default text</div>
+<div class="text-ant-lg">Large text</div>
+<div class="text-ant-xl">Extra large text</div>
+<div class="text-ant-h1">Heading 1</div>
+<div class="text-ant-h2">Heading 2</div>
+<div class="text-ant-h3">Heading 3</div>
 ```
 
 ### Shadows

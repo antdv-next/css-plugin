@@ -102,16 +102,20 @@ export function buildBorderRadiusTheme(antPrefix: string) {
 
 /**
  * 构建字体大小主题（fontSize）
+ *
+ * 键名使用 `ant-*` 前缀，避免与 Tailwind 内置的 rem 体系冲突
+ * （例如内置的 text-sm → 0.875rem 不会被覆盖）。
+ * 用法：`text-ant-sm`、`text-ant-lg` 等。
  */
 export function buildFontSizeTheme(antPrefix: string) {
   return {
-    sm: `var(--${antPrefix}-font-size-sm)`,
-    DEFAULT: `var(--${antPrefix}-font-size)`,
-    lg: `var(--${antPrefix}-font-size-lg)`,
-    xl: `var(--${antPrefix}-font-size-xl)`,
-    h1: `var(--${antPrefix}-font-size-heading-1)`,
-    h2: `var(--${antPrefix}-font-size-heading-2)`,
-    h3: `var(--${antPrefix}-font-size-heading-3)`,
+    'ant-sm': `var(--${antPrefix}-font-size-sm)`,
+    'ant-base': `var(--${antPrefix}-font-size)`,
+    'ant-lg': `var(--${antPrefix}-font-size-lg)`,
+    'ant-xl': `var(--${antPrefix}-font-size-xl)`,
+    'ant-h1': `var(--${antPrefix}-font-size-heading-1)`,
+    'ant-h2': `var(--${antPrefix}-font-size-heading-2)`,
+    'ant-h3': `var(--${antPrefix}-font-size-heading-3)`,
   }
 }
 

@@ -201,6 +201,10 @@
   --color-main: var(--ant-color-text);
   --color-sec: var(--ant-color-text-secondary);
   --color-quat: var(--ant-color-text-quaternary);
+  --color-fill: var(--ant-color-fill);
+  --color-fill-secondary: var(--ant-color-fill-secondary);
+  --color-fill-tertiary: var(--ant-color-fill-tertiary);
+  --color-fill-quaternary: var(--ant-color-fill-quaternary);
 
   /* Background Colors */
   --color-base: var(--ant-color-bg-base);
@@ -242,13 +246,13 @@
   --radius-lg: var(--ant-border-radius-lg);
 
   /* Font Size */
-  --text-sm: var(--ant-font-size-sm);
-  --text-DEFAULT: var(--ant-font-size);
-  --text-lg: var(--ant-font-size-lg);
-  --text-xl: var(--ant-font-size-xl);
-  --text-h1: var(--ant-font-size-heading-1);
-  --text-h2: var(--ant-font-size-heading-2);
-  --text-h3: var(--ant-font-size-heading-3);
+  --text-ant-sm: var(--ant-font-size-sm);
+  --text-ant-base: var(--ant-font-size);
+  --text-ant-lg: var(--ant-font-size-lg);
+  --text-ant-xl: var(--ant-font-size-xl);
+  --text-ant-h1: var(--ant-font-size-heading-1);
+  --text-ant-h2: var(--ant-font-size-heading-2);
+  --text-ant-h3: var(--ant-font-size-heading-3);
 
   /* Box Shadow */
   --shadow-DEFAULT: var(--ant-box-shadow);

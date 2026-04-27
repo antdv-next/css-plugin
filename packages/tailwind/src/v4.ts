@@ -175,13 +175,13 @@ export function generateThemeCSS(options: AntdPluginOptions = {}): string {
   // 字体大小变量 --text-*
   lines.push('')
   lines.push('  /* Font Size */')
-  lines.push(`  --text-sm: var(--${antPrefix}-font-size-sm);`)
-  lines.push(`  --text-DEFAULT: var(--${antPrefix}-font-size);`)
-  lines.push(`  --text-lg: var(--${antPrefix}-font-size-lg);`)
-  lines.push(`  --text-xl: var(--${antPrefix}-font-size-xl);`)
-  lines.push(`  --text-h1: var(--${antPrefix}-font-size-heading-1);`)
-  lines.push(`  --text-h2: var(--${antPrefix}-font-size-heading-2);`)
-  lines.push(`  --text-h3: var(--${antPrefix}-font-size-heading-3);`)
+  lines.push(`  --text-ant-sm: var(--${antPrefix}-font-size-sm);`)
+  lines.push(`  --text-ant-base: var(--${antPrefix}-font-size);`)
+  lines.push(`  --text-ant-lg: var(--${antPrefix}-font-size-lg);`)
+  lines.push(`  --text-ant-xl: var(--${antPrefix}-font-size-xl);`)
+  lines.push(`  --text-ant-h1: var(--${antPrefix}-font-size-heading-1);`)
+  lines.push(`  --text-ant-h2: var(--${antPrefix}-font-size-heading-2);`)
+  lines.push(`  --text-ant-h3: var(--${antPrefix}-font-size-heading-3);`)
 
   // 阴影变量 --shadow-*
   lines.push('')

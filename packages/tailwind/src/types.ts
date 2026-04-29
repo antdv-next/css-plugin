@@ -17,6 +17,30 @@ export interface AntdPluginOptions {
   antPrefix?: string
 }
 
+/**
+ * Tailwind CSS v4 兼容模式配置。
+ *
+ * 兼容模式会把 Ant Design token 放入独立 namespace，例如：
+ * --color-ant-primary -> bg-ant-primary / text-ant-primary
+ *
+ * 同时可以按 UnoCSS 风格额外生成带 prefix 的工具类，例如：
+ * a-bg-primary / a-text-primary
+ */
+export interface AntdV4CompatOptions extends AntdPluginOptions {
+  /**
+   * @desc Tailwind v4 theme token 的命名空间
+   * @default 'ant'
+   * @example tokenPrefix: 'ant' -> --color-ant-primary
+   */
+  tokenPrefix?: string
+  /**
+   * @desc 是否额外生成带 prefix 的工具类
+   * @default true
+   * @example allowPrefixedUtilities: true -> class="a-bg-primary"
+   */
+  allowPrefixedUtilities?: boolean
+}
+
 export const colorNames = [
   'blue',
   'purple',

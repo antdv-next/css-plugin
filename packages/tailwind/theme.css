@@ -201,6 +201,10 @@
   --color-main: var(--ant-color-text);
   --color-sec: var(--ant-color-text-secondary);
   --color-quat: var(--ant-color-text-quaternary);
+  --color-fill: var(--ant-color-fill);
+  --color-fill-secondary: var(--ant-color-fill-secondary);
+  --color-fill-tertiary: var(--ant-color-fill-tertiary);
+  --color-fill-quaternary: var(--ant-color-fill-quaternary);
 
   /* Background Colors */
   --color-base: var(--ant-color-bg-base);

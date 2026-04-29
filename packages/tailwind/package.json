@@ -30,6 +30,7 @@
       "default": "./dist/v4.js"
     },
     "./theme.css": "./theme.css",
+    "./compat.css": "./compat.css",
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
@@ -38,7 +39,8 @@
     "README.md",
     "README.zh-CN.md",
     "dist",
-    "theme.css"
+    "theme.css",
+    "compat.css"
   ],
   "scripts": {
     "build": "tsdown && pnpm generate:theme",

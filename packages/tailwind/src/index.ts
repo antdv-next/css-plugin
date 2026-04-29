@@ -13,7 +13,7 @@
 export { createAntdPlugin, default } from './plugin'
 
 // 类型导出
-export type { AntdPluginOptions, ColorName } from './types'
+export type { AntdPluginOptions, AntdV4CompatOptions, ColorName } from './types'
 
 // Tailwind CSS v4 主题生成器 (CSS @theme)
-export { defaultThemeCSS, generateThemeCSS } from './v4'
+export { defaultCompatThemeCSS, defaultThemeCSS, generateCompatThemeCSS, generateThemeCSS } from './v4'

@@ -10,9 +10,15 @@ export interface BasePresetOptions {
    */
   prefix?: string
   /**
-   * @desc 是否允许不带 prefix 的工具类
+   * @desc 是否保留带 prefix 的工具类
    * @default true
-   * @example allowUnprefixed: false -> 仅支持 class="a-bg-primary"
+   * @example allowPrefixedUtilities: false -> 不生成 class="a-bg-primary"
+   */
+  allowPrefixedUtilities?: boolean
+  /**
+   * @desc 是否允许旧的不带 prefix 的工具类
+   * @default true
+   * @example allowUnprefixed: false -> 不生成 class="bg-primary"
    */
   allowUnprefixed?: boolean
   /**
@@ -21,6 +27,12 @@ export interface BasePresetOptions {
    * @example antPrefix: 'my-app' -> var(--my-app-color-primary)
    */
   antPrefix?: string
+  /**
+   * @desc 无前缀工具类使用的 token 前缀
+   * @default 'ant'
+   * @example tokenPrefix: 'ant' -> class="bg-ant-primary"
+   */
+  tokenPrefix?: string
 }
 
 export const colorNames = [

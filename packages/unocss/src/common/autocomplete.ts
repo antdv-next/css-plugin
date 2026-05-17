@@ -7,6 +7,8 @@ import { colorNames } from './types'
 export interface AutocompleteOptions {
   prefix: string
   allowUnprefixed?: boolean
+  allowPrefixedUtilities?: boolean
+  tokenPrefix?: string
   themeKeys: {
     rounded: 'borderRadius' | 'radius'
     shadow: 'boxShadow' | 'shadow'
@@ -114,16 +116,103 @@ function createTemplatesForPrefix(prefix: string, themeKeys: AutocompleteOptions
   ]
 }
 
+function createNamespacedTemplates(tokenPrefix: string, themeKeys: AutocompleteOptions['themeKeys']) {
+  const ns = `${tokenPrefix}-`
+  const textEnum = themeKeys.text === 'text' ? TEXT_ENUM : FONT_ENUM
+
+  return [
+    `color-${tokenPrefix}`,
+    `color-${ns}${COLOR_ENUM}`,
+    `c-${tokenPrefix}`,
+    `c-${ns}${COLOR_ENUM}`,
+    `bg-${tokenPrefix}`,
+    `bg-${ns}${COLOR_ENUM}`,
+
+    `border-${tokenPrefix}`,
+    `border-${ns}${COLOR_ENUM}`,
+    `b-${tokenPrefix}`,
+    `b-${ns}${COLOR_ENUM}`,
+    `border-t-${tokenPrefix}`,
+    `border-t-${ns}${COLOR_ENUM}`,
+    `bt-${tokenPrefix}`,
+    `bt-${ns}${COLOR_ENUM}`,
+    `border-r-${tokenPrefix}`,
+    `border-r-${ns}${COLOR_ENUM}`,
+    `br-${tokenPrefix}`,
+    `br-${ns}${COLOR_ENUM}`,
+    `border-b-${tokenPrefix}`,
+    `border-b-${ns}${COLOR_ENUM}`,
+    `bb-${tokenPrefix}`,
+    `bb-${ns}${COLOR_ENUM}`,
+    `border-l-${tokenPrefix}`,
+    `border-l-${ns}${COLOR_ENUM}`,
+    `bl-${tokenPrefix}`,
+    `bl-${ns}${COLOR_ENUM}`,
+    `border-x-${tokenPrefix}`,
+    `border-x-${ns}${COLOR_ENUM}`,
+    `bx-${tokenPrefix}`,
+    `bx-${ns}${COLOR_ENUM}`,
+    `border-y-${tokenPrefix}`,
+    `border-y-${ns}${COLOR_ENUM}`,
+    `by-${tokenPrefix}`,
+    `by-${ns}${COLOR_ENUM}`,
+
+    `m-${ns}${SPACING_ENUM}`,
+    `mt-${ns}${SPACING_ENUM}`,
+    `mb-${ns}${SPACING_ENUM}`,
+    `ml-${ns}${SPACING_ENUM}`,
+    `mr-${ns}${SPACING_ENUM}`,
+    `mx-${ns}${SPACING_ENUM}`,
+    `my-${ns}${SPACING_ENUM}`,
+
+    `p-${ns}${SPACING_ENUM}`,
+    `pt-${ns}${SPACING_ENUM}`,
+    `pb-${ns}${SPACING_ENUM}`,
+    `pl-${ns}${SPACING_ENUM}`,
+    `pr-${ns}${SPACING_ENUM}`,
+    `px-${ns}${SPACING_ENUM}`,
+    `py-${ns}${SPACING_ENUM}`,
+
+    `text-${ns}${textEnum}`,
+
+    `rounded-${tokenPrefix}`,
+    `rd-${tokenPrefix}`,
+    `rounded-${ns}${RADIUS_ENUM}`,
+    `rd-${ns}${RADIUS_ENUM}`,
+    `rounded-tl-${tokenPrefix}`,
+    `rounded-tl-${ns}${RADIUS_ENUM}`,
+    `rounded-tr-${tokenPrefix}`,
+    `rounded-tr-${ns}${RADIUS_ENUM}`,
+    `rounded-bl-${tokenPrefix}`,
+    `rounded-bl-${ns}${RADIUS_ENUM}`,
+    `rounded-br-${tokenPrefix}`,
+    `rounded-br-${ns}${RADIUS_ENUM}`,
+    `rounded-t-${tokenPrefix}`,
+    `rounded-t-${ns}${RADIUS_ENUM}`,
+    `rounded-r-${tokenPrefix}`,
+    `rounded-r-${ns}${RADIUS_ENUM}`,
+    `rounded-b-${tokenPrefix}`,
+    `rounded-b-${ns}${RADIUS_ENUM}`,
+    `rounded-l-${tokenPrefix}`,
+    `rounded-l-${ns}${RADIUS_ENUM}`,
+
+    `shadow-${tokenPrefix}`,
+    `shadow-${ns}${SHADOW_ENUM}`,
+  ]
+}
+
 /**
  * 创建自动补全模板（同时支持带前缀和不带前缀）
  */
 export function createAutocompleteTemplates(options: AutocompleteOptions) {
-  const { prefix, allowUnprefixed = true, themeKeys } = options
+  const { prefix, allowUnprefixed = true, allowPrefixedUtilities = true, tokenPrefix = 'ant', themeKeys } = options
 
-  return [
+  return Array.from(new Set([
     // 带前缀的模板 (如 a-mx-lg)
-    ...createTemplatesForPrefix(prefix, themeKeys),
+    ...(allowPrefixedUtilities ? createTemplatesForPrefix(prefix, themeKeys) : []),
     // 不带前缀的模板 (如 mx-lg)
     ...(allowUnprefixed ? createTemplatesForPrefix('', themeKeys) : []),
-  ]
+    // 推荐的 namespace 安全模板 (如 text-ant-sm, bg-ant-primary)
+    ...createNamespacedTemplates(tokenPrefix, themeKeys),
+  ]))
 }

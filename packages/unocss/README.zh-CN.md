@@ -25,8 +25,10 @@ export default defineConfig({
   presets: [
     presetAntd({
       prefix: 'a',      // class 前缀，默认: 'a'
-      allowUnprefixed: true, // 支持 color-primary 这类无前缀类名，默认: true
+      allowPrefixedUtilities: true, // 保留 a-* 工具类，默认: true
+      allowUnprefixed: true, // 保留 bg-primary 这类旧 bare 类，默认: true
       antPrefix: 'ant', // CSS 变量前缀，默认: 'ant'
+      tokenPrefix: 'ant', // 生成 bg-ant-primary 这类安全命名空间类，默认: 'ant'
     }),
   ],
 })
@@ -51,8 +53,10 @@ export default defineConfig({
   presets: [
     presetAntdTailwind4({
       prefix: 'a',      // class 前缀，默认: 'a'
-      allowUnprefixed: true, // 支持 color-primary 这类无前缀类名，默认: true
+      allowPrefixedUtilities: true, // 保留 a-* 工具类，默认: true
+      allowUnprefixed: true, // 保留 bg-primary 这类旧 bare 类，默认: true
       antPrefix: 'ant', // CSS 变量前缀，默认: 'ant'
+      tokenPrefix: 'ant', // 生成 bg-ant-primary 这类安全命名空间类，默认: 'ant'
     }),
   ],
 })
@@ -82,27 +86,22 @@ export default defineConfig({
 
 ```vue
 <template>
-  <!-- 颜色 -->
+  <!-- 稳定的前缀 API -->
   <div class="a-bg-primary a-color-white">主色背景</div>
-  <div class="a-bg-container a-color-text">容器背景</div>
+  <div class="a-p-lg a-rounded-lg a-shadow-card">带前缀</div>
 
-  <!-- 间距 -->
-  <div class="a-p-lg a-m-sm">内边距和外边距</div>
-  <div class="a-px-md a-py-xs">方向性间距</div>
-
-  <!-- 边框 -->
-  <div class="a-border-primary a-rounded-lg">边框和圆角</div>
-  <div class="a-border-t-success">顶部边框颜色</div>
-
-  <!-- 阴影 -->
-  <div class="a-shadow-card">卡片阴影</div>
-
-  <!-- 文字 -->
-  <div class="a-text-lg a-color-primary">大号文字</div>
+  <!-- 推荐的 namespace 安全 API -->
+  <div class="bg-ant-primary color-ant text-ant-lg p-ant-lg rounded-ant-lg shadow-ant-card">
+    namespace 安全
+  </div>
 </template>
 ```
 
 > 注意：该预设仅自定义 `m-*` / `p-*` 相关类，不会覆盖 UnoCSS 全局 spacing（`w-*`、`max-w-*`、`gap-*` 等保持默认行为）。
+>
+> `allowUnprefixed: false` 现在只会关闭 `bg-primary`、`text-sm` 这类旧 bare 类，不会影响 `a-*` 和 `*-ant-*`。
+>
+> 为了和 Tailwind 的 PR #8 对齐，推荐使用 `tokenPrefix` 和 `allowPrefixedUtilities` 这组配置名。
 
 ## 如何选择？
 
@@ -123,6 +122,9 @@ export default defineConfig({
 - `a-color-{color}` / `a-c-{color}` - 文字颜色
 - `a-bg-{color}` - 背景颜色
 - `a-border-{color}` / `a-b-{color}` - 边框颜色
+- `color-ant-{color}` / `c-ant-{color}` - namespace 安全的文字颜色
+- `bg-ant-{color}` - namespace 安全的背景颜色
+- `border-ant-{color}` / `b-ant-{color}` - namespace 安全的边框颜色
 - 方向性边框：`a-border-t-{color}`、`a-border-r-{color}` 等
 
 ### 间距工具类
@@ -132,19 +134,25 @@ export default defineConfig({
 - `a-p-{size}` - 内边距
 - `a-pt-{size}`、`a-pr-{size}`、`a-pb-{size}`、`a-pl-{size}` - 方向性内边距
 - `a-px-{size}`、`a-py-{size}` - 水平/垂直内边距
+- `m-ant-{size}`、`mx-ant-{size}`、`p-ant-{size}`、`px-ant-{size}` - namespace 安全间距
 
 ### 边框圆角工具类
 - `a-rounded` / `a-rd` - 边框圆角
 - `a-rounded-{size}` / `a-rd-{size}` - 指定大小的边框圆角
+- `rounded-ant` / `rd-ant` - namespace 安全默认圆角
+- `rounded-ant-{size}` / `rd-ant-{size}` - namespace 安全指定圆角
 - 角落特定：`a-rounded-tl-{size}`、`a-rounded-tr-{size}` 等
 - 边侧特定：`a-rounded-t-{size}`、`a-rounded-r-{size}` 等
 
 ### 阴影工具类
 - `a-shadow` - 默认阴影
 - `a-shadow-{type}` - 特定阴影类型（card、drawer-r 等）
+- `shadow-ant` - namespace 安全默认阴影
+- `shadow-ant-{type}` - namespace 安全特定阴影
 
 ### 文字工具类
 - `a-text-{size}` - 字体大小（sm、lg、xl、h1、h2、h3）
+- `text-ant-{size}` - namespace 安全字体大小
 
 ## 可用的主题标记
 

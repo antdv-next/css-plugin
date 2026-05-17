@@ -12,15 +12,35 @@ function hasMatchingRule(rules: any[] | undefined, utility: string) {
 }
 
 function hasUnprefixedAutocomplete(templates: string[] | undefined) {
-  return (templates ?? []).some(template =>
-    template.startsWith('color-')
-    || template.startsWith('c-')
-    || template.startsWith('bg-')
-    || template.startsWith('m-')
-    || template.startsWith('text-')
-    || template.startsWith('rounded')
-    || template.startsWith('shadow'),
-  )
+  const legacyPatterns = [
+    /^color-\(/,
+    /^c-\(/,
+    /^bg-\(/,
+    /^border-\(/,
+    /^b-\(/,
+    /^(?:border-[trblxy]|b[trblxy])-\(/,
+    /^(?:m|mt|mb|ml|mr|mx|my)-\(/,
+    /^(?:p|pt|pb|pl|pr|px|py)-\(/,
+    /^text-\(/,
+    /^(?:rounded|rd)(?:$|-\()/,
+    /^(?:rounded|rd)-[trbl](?:$|-\()/,
+    /^shadow(?:$|-\()/,
+  ]
+
+  return (templates ?? []).some(template => legacyPatterns.some(pattern => pattern.test(template)))
+}
+
+function resolveUtility(preset: any, utility: string) {
+  for (const rule of (preset.rules ?? [])) {
+    if (!Array.isArray(rule) || !(rule[0] instanceof RegExp) || typeof rule[1] !== 'function')
+      continue
+
+    const match = utility.match(rule[0])
+    if (!match)
+      continue
+
+    return rule[1](match, { theme: preset.theme ?? {} })
+  }
 }
 
 describe('presetAntd', () => {
@@ -28,18 +48,61 @@ describe('presetAntd', () => {
     const preset = presetAntd()
 
     expect(hasMatchingRule(preset.rules as any[], 'color-primary')).toBe(true)
+    expect(hasMatchingRule(preset.rules as any[], 'text-ant-sm')).toBe(true)
     expect(hasUnprefixedAutocomplete(preset.autocomplete?.templates as string[])).toBe(true)
   })
 
-  it('can disable unprefixed utilities', () => {
+  it('adds namespace-safe utilities without changing prefixed APIs', () => {
+    const preset = presetAntd()
+
+    expect(resolveUtility(preset, 'a-bg-primary')).toEqual({
+      'background-color': 'var(--ant-color-primary)',
+    })
+    expect(resolveUtility(preset, 'bg-ant-primary')).toEqual({
+      'background-color': 'var(--ant-color-primary)',
+    })
+    expect(resolveUtility(preset, 'p-ant-lg')).toEqual({
+      padding: 'var(--ant-padding-lg)',
+    })
+    expect(resolveUtility(preset, 'rounded-ant-sm')).toEqual({
+      'border-radius': 'var(--ant-border-radius-sm)',
+    })
+    expect(resolveUtility(preset, 'shadow-ant-card')).toEqual({
+      'box-shadow': 'var(--ant-box-shadow-card)',
+    })
+    expect(resolveUtility(preset, 'text-ant-sm')).toEqual({
+      'font-size': 'var(--ant-font-size-sm)',
+    })
+  })
+
+  it('accepts tailwind-aligned option names', () => {
+    const preset = presetAntd({
+      tokenPrefix: 'antd',
+      allowUnprefixed: false,
+      allowPrefixedUtilities: false,
+    })
+
+    expect(hasMatchingRule(preset.rules as any[], 'a-color-primary')).toBe(false)
+    expect(hasMatchingRule(preset.rules as any[], 'color-primary')).toBe(false)
+    expect(hasMatchingRule(preset.rules as any[], 'color-antd-primary')).toBe(true)
+    expect(resolveUtility(preset, 'color-antd-primary')).toEqual({
+      color: 'var(--ant-color-primary)',
+    })
+  })
+
+  it('can disable legacy bare utilities while preserving namespaced ones', () => {
     const preset = presetAntd({ allowUnprefixed: false })
     const colors = (preset.theme as { colors?: Record<string, string> })?.colors
 
     expect(hasMatchingRule(preset.rules as any[], 'a-color-primary')).toBe(true)
     expect(hasMatchingRule(preset.rules as any[], 'color-primary')).toBe(false)
+    expect(hasMatchingRule(preset.rules as any[], 'color-ant-primary')).toBe(true)
     expect(hasUnprefixedAutocomplete(preset.autocomplete?.templates as string[])).toBe(false)
-    expect(colors?.primary).toBeUndefined()
-    expect(colors?.['a-primary']).toBeDefined()
+    expect(colors?.primary).toBeDefined()
+    expect(colors?.['a-primary']).toBeUndefined()
+    expect(resolveUtility(preset, 'color-ant-primary')).toEqual({
+      color: 'var(--ant-color-primary)',
+    })
   })
 })
 
@@ -48,17 +111,22 @@ describe('presetAntdTailwind4', () => {
     const preset = presetAntdTailwind4()
 
     expect(hasMatchingRule(preset.rules as any[], 'color-primary')).toBe(true)
+    expect(hasMatchingRule(preset.rules as any[], 'rounded-ant-lg')).toBe(true)
     expect(hasUnprefixedAutocomplete(preset.autocomplete?.templates as string[])).toBe(true)
   })
 
-  it('can disable unprefixed utilities', () => {
+  it('can disable legacy bare utilities without rewriting theme keys', () => {
     const preset = presetAntdTailwind4({ allowUnprefixed: false })
     const colors = (preset.theme as { colors?: Record<string, string> })?.colors
 
     expect(hasMatchingRule(preset.rules as any[], 'a-color-primary')).toBe(true)
     expect(hasMatchingRule(preset.rules as any[], 'color-primary')).toBe(false)
+    expect(hasMatchingRule(preset.rules as any[], 'bg-ant-primary')).toBe(true)
     expect(hasUnprefixedAutocomplete(preset.autocomplete?.templates as string[])).toBe(false)
-    expect(colors?.primary).toBeUndefined()
-    expect(colors?.['a-primary']).toBeDefined()
+    expect(colors?.primary).toBeDefined()
+    expect(colors?.['a-primary']).toBeUndefined()
+    expect(resolveUtility(preset, 'text-ant-h1')).toEqual({
+      'font-size': 'var(--ant-font-size-heading-1)',
+    })
   })
 })

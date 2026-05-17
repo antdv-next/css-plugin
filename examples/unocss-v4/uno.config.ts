@@ -19,7 +19,9 @@ export default defineConfig({
       scale: 1.2,
       warn: true,
     }),
-    presetAntdTailwind4(),
+    presetAntdTailwind4({
+      allowUnprefixed: false,
+    }),
   ],
   shortcuts: [],
   transformers: [transformerDirectives(), transformerVariantGroup()],

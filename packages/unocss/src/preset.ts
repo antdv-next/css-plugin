@@ -7,7 +7,6 @@ import {
   buildFontSizeTheme,
   buildPalettes,
   buildShadowTheme,
-  withThemeTokenPrefix,
   createAutocompleteTemplates,
   createBorderRules,
   createColorRules,
@@ -23,9 +22,10 @@ export interface AntdPresetOptions extends BasePresetOptions {}
 
 export const presetAntd = definePreset((options?: AntdPresetOptions): Preset => {
   const prefix = options?.prefix || 'a'
+  const allowPrefixedUtilities = options?.allowPrefixedUtilities ?? true
   const allowUnprefixed = options?.allowUnprefixed ?? true
   const antPrefix = options?.antPrefix || 'ant'
-  const themeTokenPrefix = allowUnprefixed ? undefined : prefix
+  const tokenPrefix = options?.tokenPrefix || 'ant'
 
   // 根据 antPrefix 动态生成调色板
   const builtPalettes = buildPalettes(antPrefix)
@@ -33,37 +33,27 @@ export const presetAntd = definePreset((options?: AntdPresetOptions): Preset => 
   return {
     name: 'preset-antd',
     theme: {
-      colors: withThemeTokenPrefix(buildColorsTheme(antPrefix, builtPalettes), themeTokenPrefix),
-      borderRadius: withThemeTokenPrefix(buildBorderRadiusTheme(antPrefix), themeTokenPrefix),
-      fontSize: withThemeTokenPrefix(buildFontSizeTheme(antPrefix), themeTokenPrefix),
-      boxShadow: withThemeTokenPrefix(buildShadowTheme(antPrefix), themeTokenPrefix),
+      colors: buildColorsTheme(antPrefix, builtPalettes),
+      borderRadius: buildBorderRadiusTheme(antPrefix),
+      fontSize: buildFontSizeTheme(antPrefix),
+      boxShadow: buildShadowTheme(antPrefix),
     },
 
     // 自定义规则
     rules: ([
-      // 带前缀的规则 (如 a-mx-lg)
-      ...createColorRules(prefix, themeTokenPrefix),
-      ...createBorderRules(prefix, themeTokenPrefix),
-      ...createSpacingRules(prefix, antPrefix),
-      ...createTextRules(prefix, 'fontSize', themeTokenPrefix),
-      ...createRoundedRules(prefix, 'borderRadius', themeTokenPrefix),
-      ...createShadowRules(prefix, 'boxShadow', themeTokenPrefix),
-      // 可选的不带前缀规则 (如 mx-lg)
-      ...(allowUnprefixed
-        ? [
-            ...createColorRules(''),
-            ...createBorderRules(''),
-            ...createSpacingRules('', antPrefix),
-            ...createTextRules('', 'fontSize'),
-            ...createRoundedRules('', 'borderRadius'),
-            ...createShadowRules('', 'boxShadow'),
-          ]
-        : []),
+      ...createColorRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createBorderRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createSpacingRules(prefix, antPrefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createTextRules(prefix, 'fontSize', tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createRoundedRules(prefix, 'borderRadius', tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createShadowRules(prefix, 'boxShadow', tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
     ] as any),
     autocomplete: {
       templates: createAutocompleteTemplates({
         prefix,
         allowUnprefixed,
+        allowPrefixedUtilities,
+        tokenPrefix,
         themeKeys: {
           rounded: 'borderRadius',
           shadow: 'boxShadow',

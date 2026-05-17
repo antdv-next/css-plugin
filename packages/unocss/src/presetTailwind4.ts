@@ -7,7 +7,6 @@ import {
   buildRadiusTheme,
   buildShadowTheme,
   buildTextTheme,
-  withThemeTokenPrefix,
   createAutocompleteTemplates,
   createBorderRules,
   createColorRules,
@@ -23,9 +22,10 @@ export interface AntdPresetTailwind4Options extends BasePresetOptions {}
 
 export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Options): Preset => {
   const prefix = options?.prefix || 'a'
+  const allowPrefixedUtilities = options?.allowPrefixedUtilities ?? true
   const allowUnprefixed = options?.allowUnprefixed ?? true
   const antPrefix = options?.antPrefix || 'ant'
-  const themeTokenPrefix = allowUnprefixed ? undefined : prefix
+  const tokenPrefix = options?.tokenPrefix || 'ant'
 
   // 根据 antPrefix 动态生成调色板
   const builtPalettes = buildPalettes(antPrefix)
@@ -33,39 +33,29 @@ export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Op
   return {
     name: 'preset-antd-tailwind4',
     theme: {
-      colors: withThemeTokenPrefix(buildColorsTheme(antPrefix, builtPalettes), themeTokenPrefix),
-      radius: withThemeTokenPrefix(buildRadiusTheme(antPrefix), themeTokenPrefix),
-      text: withThemeTokenPrefix(buildTextTheme(antPrefix), themeTokenPrefix),
-      shadow: withThemeTokenPrefix(buildShadowTheme(antPrefix), themeTokenPrefix),
+      colors: buildColorsTheme(antPrefix, builtPalettes),
+      radius: buildRadiusTheme(antPrefix),
+      text: buildTextTheme(antPrefix),
+      shadow: buildShadowTheme(antPrefix),
       // Tailwind 4 新增的 defaults 配置
       defaults: {},
     },
 
     // 自定义规则
     rules: ([
-      // 带前缀的规则 (如 a-mx-lg)
-      ...createColorRules(prefix, themeTokenPrefix),
-      ...createBorderRules(prefix, themeTokenPrefix),
-      ...createSpacingRules(prefix, antPrefix),
-      ...createTextRules(prefix, 'text', themeTokenPrefix),
-      ...createRoundedRules(prefix, 'radius', themeTokenPrefix),
-      ...createShadowRules(prefix, 'shadow', themeTokenPrefix),
-      // 可选的不带前缀规则 (如 mx-lg)
-      ...(allowUnprefixed
-        ? [
-            ...createColorRules(''),
-            ...createBorderRules(''),
-            ...createSpacingRules('', antPrefix),
-            ...createTextRules('', 'text'),
-            ...createRoundedRules('', 'radius'),
-            ...createShadowRules('', 'shadow'),
-          ]
-        : []),
+      ...createColorRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createBorderRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createSpacingRules(prefix, antPrefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createTextRules(prefix, 'text', tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createRoundedRules(prefix, 'radius', tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createShadowRules(prefix, 'shadow', tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
     ] as any),
     autocomplete: {
       templates: createAutocompleteTemplates({
         prefix,
         allowUnprefixed,
+        allowPrefixedUtilities,
+        tokenPrefix,
         themeKeys: {
           rounded: 'radius',
           shadow: 'shadow',

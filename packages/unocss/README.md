@@ -25,8 +25,10 @@ export default defineConfig({
   presets: [
     presetAntd({
       prefix: 'a',      // class prefix, default: 'a'
-      allowUnprefixed: true, // support color-primary style classes, default: true
+      allowPrefixedUtilities: true, // keep a-* utilities, default: true
+      allowUnprefixed: true, // keep legacy bare classes like bg-primary, default: true
       antPrefix: 'ant', // CSS variable prefix, default: 'ant'
+      tokenPrefix: 'ant', // namespace-safe classes like bg-ant-primary, default: 'ant'
     }),
   ],
 })
@@ -51,8 +53,10 @@ export default defineConfig({
   presets: [
     presetAntdTailwind4({
       prefix: 'a',      // class prefix, default: 'a'
-      allowUnprefixed: true, // support color-primary style classes, default: true
+      allowPrefixedUtilities: true, // keep a-* utilities, default: true
+      allowUnprefixed: true, // keep legacy bare classes like bg-primary, default: true
       antPrefix: 'ant', // CSS variable prefix, default: 'ant'
+      tokenPrefix: 'ant', // namespace-safe classes like bg-ant-primary, default: 'ant'
     }),
   ],
 })
@@ -82,27 +86,22 @@ Both presets support the same utility class patterns:
 
 ```vue
 <template>
-  <!-- Colors -->
+  <!-- Stable prefixed APIs -->
   <div class="a-bg-primary a-color-white">Primary Background</div>
-  <div class="a-bg-container a-color-text">Container Background</div>
+  <div class="a-p-lg a-rounded-lg a-shadow-card">Prefixed</div>
 
-  <!-- Spacing -->
-  <div class="a-p-lg a-m-sm">Padding & Margin</div>
-  <div class="a-px-md a-py-xs">Directional Spacing</div>
-
-  <!-- Border -->
-  <div class="a-border-primary a-rounded-lg">Bordered & Rounded</div>
-  <div class="a-border-t-success">Top Border Color</div>
-
-  <!-- Shadow -->
-  <div class="a-shadow-card">Card Shadow</div>
-
-  <!-- Text -->
-  <div class="a-text-lg a-color-primary">Large Text</div>
+  <!-- Namespace-safe unprefixed APIs -->
+  <div class="bg-ant-primary color-ant text-ant-lg p-ant-lg rounded-ant-lg shadow-ant-card">
+    Namespace safe
+  </div>
 </template>
 ```
 
 > Note: this preset only customizes `m-*` / `p-*` related classes and does not override UnoCSS global spacing scale (`w-*`, `max-w-*`, `gap-*`, etc.).
+>
+> `allowUnprefixed: false` now disables only the legacy bare utilities such as `bg-primary` and `text-sm`. Prefixed `a-*` and namespace-safe `*-ant-*` utilities remain available.
+>
+> For parity with Tailwind PR #8, the preferred option names are `tokenPrefix` and `allowPrefixedUtilities`.
 
 ## When to Use Which?
 
@@ -123,6 +122,9 @@ Both presets support the same utility class patterns:
 - `a-color-{color}` / `a-c-{color}` - Text color
 - `a-bg-{color}` - Background color
 - `a-border-{color}` / `a-b-{color}` - Border color
+- `color-ant-{color}` / `c-ant-{color}` - Namespace-safe text color
+- `bg-ant-{color}` - Namespace-safe background color
+- `border-ant-{color}` / `b-ant-{color}` - Namespace-safe border color
 - Directional borders: `a-border-t-{color}`, `a-border-r-{color}`, etc.
 
 ### Spacing Utilities
@@ -132,19 +134,25 @@ Both presets support the same utility class patterns:
 - `a-p-{size}` - Padding
 - `a-pt-{size}`, `a-pr-{size}`, `a-pb-{size}`, `a-pl-{size}` - Directional padding
 - `a-px-{size}`, `a-py-{size}` - Horizontal/Vertical padding
+- `m-ant-{size}`, `mx-ant-{size}`, `p-ant-{size}`, `px-ant-{size}` - Namespace-safe spacing
 
 ### Border Radius Utilities
 - `a-rounded` / `a-rd` - Border radius
 - `a-rounded-{size}` / `a-rd-{size}` - Border radius with size
+- `rounded-ant` / `rd-ant` - Namespace-safe default border radius
+- `rounded-ant-{size}` / `rd-ant-{size}` - Namespace-safe border radius with size
 - Corner specific: `a-rounded-tl-{size}`, `a-rounded-tr-{size}`, etc.
 - Side specific: `a-rounded-t-{size}`, `a-rounded-r-{size}`, etc.
 
 ### Shadow Utilities
 - `a-shadow` - Default shadow
 - `a-shadow-{type}` - Specific shadow type (card, drawer-r, etc.)
+- `shadow-ant` - Namespace-safe default shadow
+- `shadow-ant-{type}` - Namespace-safe shadow type
 
 ### Text Utilities
 - `a-text-{size}` - Font size (sm, lg, xl, h1, h2, h3)
+- `text-ant-{size}` - Namespace-safe font size
 
 ## Available Theme Tokens
 

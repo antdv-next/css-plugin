@@ -11,7 +11,10 @@
 import type { AntdPluginOptions } from './types'
 import { colorNames } from './types'
 
-const spacingTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'] as const
+// 与 antdv 1.3.0 内置 CSS 变量保持一致：
+// padding 仅到 xl，margin 到 xxl，xxxl 已被移除
+const paddingTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const
+const marginTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const
 
 const paddingUtilityConfig = [
   ['p', 'padding'],
@@ -36,10 +39,11 @@ const marginUtilityConfig = [
 function pushDirectionalSpacingUtilities(
   lines: string[],
   variableNamespace: 'padding' | 'margin',
+  tokens: ReadonlyArray<string>,
   utilityConfig: ReadonlyArray<readonly [string, string]>,
 ): void {
   for (const [utilityName, cssProperty] of utilityConfig) {
-    for (const token of spacingTokens) {
+    for (const token of tokens) {
       lines.push(`@utility ${utilityName}-${token} {`)
       lines.push(`  ${cssProperty}: var(--${variableNamespace}-${token});`)
       lines.push('}')
@@ -80,87 +84,155 @@ export function generateThemeCSS(options: AntdPluginOptions = {}): string {
     }
   }
 
+  const c = (key: string, src: string) => {
+    lines.push(`  --color-${key}: var(--${antPrefix}-color-${src});`)
+  }
+
   lines.push('')
   lines.push('  /* Brand / Primary Colors */')
-  lines.push(`  --color-primary: var(--${antPrefix}-color-primary);`)
-  lines.push(`  --color-primary-hover: var(--${antPrefix}-color-primary-hover);`)
-  lines.push(`  --color-primary-active: var(--${antPrefix}-color-primary-active);`)
-  lines.push(`  --color-primary-bg: var(--${antPrefix}-color-primary-bg);`)
-  lines.push(`  --color-primary-bg-hover: var(--${antPrefix}-color-primary-bg-hover);`)
+  c('primary', 'primary')
+  c('primary-hover', 'primary-hover')
+  c('primary-active', 'primary-active')
+  c('primary-bg', 'primary-bg')
+  c('primary-bg-hover', 'primary-bg-hover')
+  c('primary-border', 'primary-border')
+  c('primary-border-hover', 'primary-border-hover')
+  c('primary-text', 'primary-text')
+  c('primary-text-hover', 'primary-text-hover')
+  c('primary-text-active', 'primary-text-active')
 
   lines.push('')
   lines.push('  /* Functional Colors - Success */')
-  lines.push(`  --color-success: var(--${antPrefix}-color-success);`)
-  lines.push(`  --color-success-bg: var(--${antPrefix}-color-success-bg);`)
-  lines.push(`  --color-success-border: var(--${antPrefix}-color-success-border);`)
-  lines.push(`  --color-success-hover: var(--${antPrefix}-color-success-hover);`)
+  c('success', 'success')
+  c('success-hover', 'success-hover')
+  c('success-active', 'success-active')
+  c('success-bg', 'success-bg')
+  c('success-bg-hover', 'success-bg-hover')
+  c('success-border', 'success-border')
+  c('success-border-hover', 'success-border-hover')
+  c('success-text', 'success-text')
+  c('success-text-hover', 'success-text-hover')
+  c('success-text-active', 'success-text-active')
 
   lines.push('')
   lines.push('  /* Functional Colors - Warning */')
-  lines.push(`  --color-warning: var(--${antPrefix}-color-warning);`)
-  lines.push(`  --color-warning-bg: var(--${antPrefix}-color-warning-bg);`)
-  lines.push(`  --color-warning-border: var(--${antPrefix}-color-warning-border);`)
-  lines.push(`  --color-warning-hover: var(--${antPrefix}-color-warning-hover);`)
+  c('warning', 'warning')
+  c('warning-hover', 'warning-hover')
+  c('warning-active', 'warning-active')
+  c('warning-bg', 'warning-bg')
+  c('warning-bg-hover', 'warning-bg-hover')
+  c('warning-border', 'warning-border')
+  c('warning-border-hover', 'warning-border-hover')
+  c('warning-text', 'warning-text')
+  c('warning-text-hover', 'warning-text-hover')
+  c('warning-text-active', 'warning-text-active')
+  c('warning-affix', 'warning-affix')
 
   lines.push('')
   lines.push('  /* Functional Colors - Error */')
-  lines.push(`  --color-error: var(--${antPrefix}-color-error);`)
-  lines.push(`  --color-error-bg: var(--${antPrefix}-color-error-bg);`)
-  lines.push(`  --color-error-border: var(--${antPrefix}-color-error-border);`)
-  lines.push(`  --color-error-hover: var(--${antPrefix}-color-error-hover);`)
+  c('error', 'error')
+  c('error-hover', 'error-hover')
+  c('error-active', 'error-active')
+  c('error-bg', 'error-bg')
+  c('error-bg-hover', 'error-bg-hover')
+  c('error-bg-filled-hover', 'error-bg-filled-hover')
+  c('error-bg-active', 'error-bg-active')
+  c('error-border', 'error-border')
+  c('error-border-hover', 'error-border-hover')
+  c('error-text', 'error-text')
+  c('error-text-hover', 'error-text-hover')
+  c('error-text-active', 'error-text-active')
+  c('error-affix', 'error-affix')
 
   lines.push('')
   lines.push('  /* Functional Colors - Info */')
-  lines.push(`  --color-info: var(--${antPrefix}-color-info);`)
-  lines.push(`  --color-info-bg: var(--${antPrefix}-color-info-bg);`)
-  lines.push(`  --color-info-border: var(--${antPrefix}-color-info-border);`)
+  c('info', 'info')
+  c('info-hover', 'info-hover')
+  c('info-active', 'info-active')
+  c('info-bg', 'info-bg')
+  c('info-bg-hover', 'info-bg-hover')
+  c('info-border', 'info-border')
+  c('info-border-hover', 'info-border-hover')
+  c('info-text', 'info-text')
+  c('info-text-hover', 'info-text-hover')
+  c('info-text-active', 'info-text-active')
 
   lines.push('')
   lines.push('  /* Link Colors */')
-  lines.push(`  --color-link: var(--${antPrefix}-color-link);`)
-  lines.push(`  --color-link-hover: var(--${antPrefix}-color-link-hover);`)
-  lines.push(`  --color-link-active: var(--${antPrefix}-color-link-active);`)
+  c('link', 'link')
+  c('link-hover', 'link-hover')
+  c('link-active', 'link-active')
 
   lines.push('')
   lines.push('  /* Text Colors */')
-  lines.push(`  --color-text: var(--${antPrefix}-color-text);`)
-  lines.push(`  --color-text-secondary: var(--${antPrefix}-color-text-secondary);`)
-  lines.push(`  --color-text-tertiary: var(--${antPrefix}-color-text-tertiary);`)
-  lines.push(`  --color-text-quaternary: var(--${antPrefix}-color-text-quaternary);`)
-  lines.push(`  --color-text-quat: var(--${antPrefix}-color-text-quaternary);`)
-  lines.push(`  --color-main: var(--${antPrefix}-color-text);`)
-  lines.push(`  --color-sec: var(--${antPrefix}-color-text-secondary);`)
-  lines.push(`  --color-quat: var(--${antPrefix}-color-text-quaternary);`)
-  lines.push(`  --color-fill: var(--${antPrefix}-color-fill);`)
-  lines.push(`  --color-fill-secondary: var(--${antPrefix}-color-fill-secondary);`)
-  lines.push(`  --color-fill-tertiary: var(--${antPrefix}-color-fill-tertiary);`)
-  lines.push(`  --color-fill-quaternary: var(--${antPrefix}-color-fill-quaternary);`)
+  c('text', 'text')
+  c('text-secondary', 'text-secondary')
+  c('text-tertiary', 'text-tertiary')
+  c('text-quaternary', 'text-quaternary')
+  c('text-quat', 'text-quaternary')
+  c('text-placeholder', 'text-placeholder')
+  c('text-disabled', 'text-disabled')
+  c('text-heading', 'text-heading')
+  c('text-label', 'text-label')
+  c('text-description', 'text-description')
+  c('text-light-solid', 'text-light-solid')
+  c('main', 'text')
+  c('sec', 'text-secondary')
+  c('quat', 'text-quaternary')
+
+  lines.push('')
+  lines.push('  /* Fill Colors */')
+  c('fill', 'fill')
+  c('fill-secondary', 'fill-secondary')
+  c('fill-tertiary', 'fill-tertiary')
+  c('fill-quaternary', 'fill-quaternary')
+  c('fill-content', 'fill-content')
+  c('fill-content-hover', 'fill-content-hover')
+  c('fill-alter', 'fill-alter')
 
   lines.push('')
   lines.push('  /* Background Colors */')
-  lines.push(`  --color-base: var(--${antPrefix}-color-bg-base);`)
-  lines.push(`  --color-container: var(--${antPrefix}-color-bg-container);`)
-  lines.push(`  --color-layout: var(--${antPrefix}-color-bg-layout);`)
-  lines.push(`  --color-elevated: var(--${antPrefix}-color-bg-elevated);`)
-  lines.push(`  --color-mask: var(--${antPrefix}-color-bg-mask);`)
-  lines.push(`  --color-split: var(--${antPrefix}-color-split);`)
+  c('base', 'bg-base')
+  c('container', 'bg-container')
+  c('container-disabled', 'bg-container-disabled')
+  c('layout', 'bg-layout')
+  c('elevated', 'bg-elevated')
+  c('spotlight', 'bg-spotlight')
+  c('blur', 'bg-blur')
+  c('mask', 'bg-mask')
+  c('solid', 'bg-solid')
+  c('solid-hover', 'bg-solid-hover')
+  c('solid-active', 'bg-solid-active')
+  c('split', 'split')
 
   lines.push('')
   lines.push('  /* Border Colors */')
-  lines.push(`  --color-border: var(--${antPrefix}-color-border);`)
-  lines.push(`  --color-border-secondary: var(--${antPrefix}-color-border-secondary);`)
-  lines.push(`  --color-border-sec: var(--${antPrefix}-color-border-secondary);`)
+  c('border', 'border')
+  c('border-secondary', 'border-secondary')
+  c('border-sec', 'border-secondary')
+  c('border-disabled', 'border-disabled')
+  c('border-bg', 'border-bg')
+
+  lines.push('')
+  lines.push('  /* Icon Colors */')
+  c('icon', 'icon')
+  c('icon-hover', 'icon-hover')
+
+  lines.push('')
+  lines.push('  /* Misc */')
+  c('highlight', 'highlight')
+  c('white', 'white')
 
   // 间距变量（拆分 padding / margin，避免污染 max-w-md 等 spacing 相关工具类）
   lines.push('')
   lines.push('  /* Padding Tokens */')
-  for (const token of spacingTokens) {
+  for (const token of paddingTokens) {
     lines.push(`  --padding-${token}: var(--${antPrefix}-padding-${token});`)
   }
 
   lines.push('')
   lines.push('  /* Margin Tokens */')
-  for (const token of spacingTokens) {
+  for (const token of marginTokens) {
     lines.push(`  --margin-${token}: var(--${antPrefix}-margin-${token});`)
   }
 
@@ -205,9 +277,9 @@ export function generateThemeCSS(options: AntdPluginOptions = {}): string {
   lines.push('}')
   lines.push('')
   lines.push('/* Padding Utilities */')
-  pushDirectionalSpacingUtilities(lines, 'padding', paddingUtilityConfig)
+  pushDirectionalSpacingUtilities(lines, 'padding', paddingTokens, paddingUtilityConfig)
   lines.push('/* Margin Utilities */')
-  pushDirectionalSpacingUtilities(lines, 'margin', marginUtilityConfig)
+  pushDirectionalSpacingUtilities(lines, 'margin', marginTokens, marginUtilityConfig)
 
   return lines.join('\n')
 }

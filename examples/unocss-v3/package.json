@@ -12,13 +12,13 @@
     "vue": "catalog:example"
   },
   "devDependencies": {
+    "@antdv-next/unocss": "workspace:*",
     "@types/node": "catalog:example",
     "@vitejs/plugin-vue": "catalog:example",
     "@vue/tsconfig": "catalog:example",
     "typescript": "catalog:example",
     "unocss": "catalog:dev",
     "vite": "catalog:example",
-    "vue-tsc": "catalog:example",
-    "@antdv-next/unocss": "workspace:*"
+    "vue-tsc": "catalog:example"
   }
 }

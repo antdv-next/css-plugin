@@ -163,29 +163,63 @@
   --color-primary-active: var(--ant-color-primary-active);
   --color-primary-bg: var(--ant-color-primary-bg);
   --color-primary-bg-hover: var(--ant-color-primary-bg-hover);
+  --color-primary-border: var(--ant-color-primary-border);
+  --color-primary-border-hover: var(--ant-color-primary-border-hover);
+  --color-primary-text: var(--ant-color-primary-text);
+  --color-primary-text-hover: var(--ant-color-primary-text-hover);
+  --color-primary-text-active: var(--ant-color-primary-text-active);
 
   /* Functional Colors - Success */
   --color-success: var(--ant-color-success);
-  --color-success-bg: var(--ant-color-success-bg);
-  --color-success-border: var(--ant-color-success-border);
   --color-success-hover: var(--ant-color-success-hover);
+  --color-success-active: var(--ant-color-success-active);
+  --color-success-bg: var(--ant-color-success-bg);
+  --color-success-bg-hover: var(--ant-color-success-bg-hover);
+  --color-success-border: var(--ant-color-success-border);
+  --color-success-border-hover: var(--ant-color-success-border-hover);
+  --color-success-text: var(--ant-color-success-text);
+  --color-success-text-hover: var(--ant-color-success-text-hover);
+  --color-success-text-active: var(--ant-color-success-text-active);
 
   /* Functional Colors - Warning */
   --color-warning: var(--ant-color-warning);
-  --color-warning-bg: var(--ant-color-warning-bg);
-  --color-warning-border: var(--ant-color-warning-border);
   --color-warning-hover: var(--ant-color-warning-hover);
+  --color-warning-active: var(--ant-color-warning-active);
+  --color-warning-bg: var(--ant-color-warning-bg);
+  --color-warning-bg-hover: var(--ant-color-warning-bg-hover);
+  --color-warning-border: var(--ant-color-warning-border);
+  --color-warning-border-hover: var(--ant-color-warning-border-hover);
+  --color-warning-text: var(--ant-color-warning-text);
+  --color-warning-text-hover: var(--ant-color-warning-text-hover);
+  --color-warning-text-active: var(--ant-color-warning-text-active);
+  --color-warning-affix: var(--ant-color-warning-affix);
 
   /* Functional Colors - Error */
   --color-error: var(--ant-color-error);
-  --color-error-bg: var(--ant-color-error-bg);
-  --color-error-border: var(--ant-color-error-border);
   --color-error-hover: var(--ant-color-error-hover);
+  --color-error-active: var(--ant-color-error-active);
+  --color-error-bg: var(--ant-color-error-bg);
+  --color-error-bg-hover: var(--ant-color-error-bg-hover);
+  --color-error-bg-filled-hover: var(--ant-color-error-bg-filled-hover);
+  --color-error-bg-active: var(--ant-color-error-bg-active);
+  --color-error-border: var(--ant-color-error-border);
+  --color-error-border-hover: var(--ant-color-error-border-hover);
+  --color-error-text: var(--ant-color-error-text);
+  --color-error-text-hover: var(--ant-color-error-text-hover);
+  --color-error-text-active: var(--ant-color-error-text-active);
+  --color-error-affix: var(--ant-color-error-affix);
 
   /* Functional Colors - Info */
   --color-info: var(--ant-color-info);
+  --color-info-hover: var(--ant-color-info-hover);
+  --color-info-active: var(--ant-color-info-active);
   --color-info-bg: var(--ant-color-info-bg);
+  --color-info-bg-hover: var(--ant-color-info-bg-hover);
   --color-info-border: var(--ant-color-info-border);
+  --color-info-border-hover: var(--ant-color-info-border-hover);
+  --color-info-text: var(--ant-color-info-text);
+  --color-info-text-hover: var(--ant-color-info-text-hover);
+  --color-info-text-active: var(--ant-color-info-text-active);
 
   /* Link Colors */
   --color-link: var(--ant-color-link);
@@ -198,22 +232,53 @@
   --color-text-tertiary: var(--ant-color-text-tertiary);
   --color-text-quaternary: var(--ant-color-text-quaternary);
   --color-text-quat: var(--ant-color-text-quaternary);
+  --color-text-placeholder: var(--ant-color-text-placeholder);
+  --color-text-disabled: var(--ant-color-text-disabled);
+  --color-text-heading: var(--ant-color-text-heading);
+  --color-text-label: var(--ant-color-text-label);
+  --color-text-description: var(--ant-color-text-description);
+  --color-text-light-solid: var(--ant-color-text-light-solid);
   --color-main: var(--ant-color-text);
   --color-sec: var(--ant-color-text-secondary);
   --color-quat: var(--ant-color-text-quaternary);
 
+  /* Fill Colors */
+  --color-fill: var(--ant-color-fill);
+  --color-fill-secondary: var(--ant-color-fill-secondary);
+  --color-fill-tertiary: var(--ant-color-fill-tertiary);
+  --color-fill-quaternary: var(--ant-color-fill-quaternary);
+  --color-fill-content: var(--ant-color-fill-content);
+  --color-fill-content-hover: var(--ant-color-fill-content-hover);
+  --color-fill-alter: var(--ant-color-fill-alter);
+
   /* Background Colors */
   --color-base: var(--ant-color-bg-base);
   --color-container: var(--ant-color-bg-container);
+  --color-container-disabled: var(--ant-color-bg-container-disabled);
   --color-layout: var(--ant-color-bg-layout);
   --color-elevated: var(--ant-color-bg-elevated);
+  --color-spotlight: var(--ant-color-bg-spotlight);
+  --color-blur: var(--ant-color-bg-blur);
   --color-mask: var(--ant-color-bg-mask);
+  --color-solid: var(--ant-color-bg-solid);
+  --color-solid-hover: var(--ant-color-bg-solid-hover);
+  --color-solid-active: var(--ant-color-bg-solid-active);
   --color-split: var(--ant-color-split);
 
   /* Border Colors */
   --color-border: var(--ant-color-border);
   --color-border-secondary: var(--ant-color-border-secondary);
   --color-border-sec: var(--ant-color-border-secondary);
+  --color-border-disabled: var(--ant-color-border-disabled);
+  --color-border-bg: var(--ant-color-border-bg);
+
+  /* Icon Colors */
+  --color-icon: var(--ant-color-icon);
+  --color-icon-hover: var(--ant-color-icon-hover);
+
+  /* Misc */
+  --color-highlight: var(--ant-color-highlight);
+  --color-white: var(--ant-color-white);
 
   /* Padding Tokens */
   --padding-xxs: var(--ant-padding-xxs);
@@ -222,8 +287,6 @@
   --padding-md: var(--ant-padding-md);
   --padding-lg: var(--ant-padding-lg);
   --padding-xl: var(--ant-padding-xl);
-  --padding-xxl: var(--ant-padding-xxl);
-  --padding-xxxl: var(--ant-padding-xxxl);
 
   /* Margin Tokens */
   --margin-xxs: var(--ant-margin-xxs);
@@ -233,7 +296,6 @@
   --margin-lg: var(--ant-margin-lg);
   --margin-xl: var(--ant-margin-xl);
   --margin-xxl: var(--ant-margin-xxl);
-  --margin-xxxl: var(--ant-margin-xxxl);
 
   /* Border Radius */
   --radius-xs: var(--ant-border-radius-xs);
@@ -287,12 +349,6 @@
 @utility p-xl {
   padding: var(--padding-xl);
 }
-@utility p-xxl {
-  padding: var(--padding-xxl);
-}
-@utility p-xxxl {
-  padding: var(--padding-xxxl);
-}
 
 @utility px-xxs {
   padding-inline: var(--padding-xxs);
@@ -311,12 +367,6 @@
 }
 @utility px-xl {
   padding-inline: var(--padding-xl);
-}
-@utility px-xxl {
-  padding-inline: var(--padding-xxl);
-}
-@utility px-xxxl {
-  padding-inline: var(--padding-xxxl);
 }
 
 @utility py-xxs {
@@ -337,12 +387,6 @@
 @utility py-xl {
   padding-block: var(--padding-xl);
 }
-@utility py-xxl {
-  padding-block: var(--padding-xxl);
-}
-@utility py-xxxl {
-  padding-block: var(--padding-xxxl);
-}
 
 @utility pt-xxs {
   padding-top: var(--padding-xxs);
@@ -361,12 +405,6 @@
 }
 @utility pt-xl {
   padding-top: var(--padding-xl);
-}
-@utility pt-xxl {
-  padding-top: var(--padding-xxl);
-}
-@utility pt-xxxl {
-  padding-top: var(--padding-xxxl);
 }
 
 @utility pr-xxs {
@@ -387,12 +425,6 @@
 @utility pr-xl {
   padding-right: var(--padding-xl);
 }
-@utility pr-xxl {
-  padding-right: var(--padding-xxl);
-}
-@utility pr-xxxl {
-  padding-right: var(--padding-xxxl);
-}
 
 @utility pb-xxs {
   padding-bottom: var(--padding-xxs);
@@ -412,12 +444,6 @@
 @utility pb-xl {
   padding-bottom: var(--padding-xl);
 }
-@utility pb-xxl {
-  padding-bottom: var(--padding-xxl);
-}
-@utility pb-xxxl {
-  padding-bottom: var(--padding-xxxl);
-}
 
 @utility pl-xxs {
   padding-left: var(--padding-xxs);
@@ -436,12 +462,6 @@
 }
 @utility pl-xl {
   padding-left: var(--padding-xl);
-}
-@utility pl-xxl {
-  padding-left: var(--padding-xxl);
-}
-@utility pl-xxxl {
-  padding-left: var(--padding-xxxl);
 }
 
 /* Margin Utilities */
@@ -466,9 +486,6 @@
 @utility m-xxl {
   margin: var(--margin-xxl);
 }
-@utility m-xxxl {
-  margin: var(--margin-xxxl);
-}
 
 @utility mx-xxs {
   margin-inline: var(--margin-xxs);
@@ -490,9 +507,6 @@
 }
 @utility mx-xxl {
   margin-inline: var(--margin-xxl);
-}
-@utility mx-xxxl {
-  margin-inline: var(--margin-xxxl);
 }
 
 @utility my-xxs {
@@ -516,9 +530,6 @@
 @utility my-xxl {
   margin-block: var(--margin-xxl);
 }
-@utility my-xxxl {
-  margin-block: var(--margin-xxxl);
-}
 
 @utility mt-xxs {
   margin-top: var(--margin-xxs);
@@ -540,9 +551,6 @@
 }
 @utility mt-xxl {
   margin-top: var(--margin-xxl);
-}
-@utility mt-xxxl {
-  margin-top: var(--margin-xxxl);
 }
 
 @utility mr-xxs {
@@ -566,9 +574,6 @@
 @utility mr-xxl {
   margin-right: var(--margin-xxl);
 }
-@utility mr-xxxl {
-  margin-right: var(--margin-xxxl);
-}
 
 @utility mb-xxs {
   margin-bottom: var(--margin-xxs);
@@ -591,9 +596,6 @@
 @utility mb-xxl {
   margin-bottom: var(--margin-xxl);
 }
-@utility mb-xxxl {
-  margin-bottom: var(--margin-xxxl);
-}
 
 @utility ml-xxs {
   margin-left: var(--margin-xxs);
@@ -615,7 +617,4 @@
 }
 @utility ml-xxl {
   margin-left: var(--margin-xxl);
-}
-@utility ml-xxxl {
-  margin-left: var(--margin-xxxl);
 }

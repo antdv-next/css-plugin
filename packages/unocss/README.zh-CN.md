@@ -24,9 +24,11 @@ import { presetAntd } from '@antdv-next/unocss'
 export default defineConfig({
   presets: [
     presetAntd({
-      prefix: 'a',      // class 前缀，默认: 'a'
-      allowUnprefixed: true, // 支持 color-primary 这类无前缀类名，默认: true
-      antPrefix: 'ant', // CSS 变量前缀，默认: 'ant'
+      prefix: 'a',                  // class 前缀，默认: 'a'
+      allowPrefixedUtilities: true, // 保留 a-* 工具类，默认: true
+      allowUnprefixed: true,        // 保留 bg-primary 这类旧裸类，默认: true
+      antPrefix: 'ant',             // CSS 变量前缀，默认: 'ant'
+      tokenPrefix: 'ant',           // 生成 bg-ant-primary 这类 namespace 安全类，默认: 'ant'
     }),
   ],
 })
@@ -50,9 +52,11 @@ import { presetAntdTailwind4 } from '@antdv-next/unocss'
 export default defineConfig({
   presets: [
     presetAntdTailwind4({
-      prefix: 'a',      // class 前缀，默认: 'a'
-      allowUnprefixed: true, // 支持 color-primary 这类无前缀类名，默认: true
-      antPrefix: 'ant', // CSS 变量前缀，默认: 'ant'
+      prefix: 'a',                  // class 前缀，默认: 'a'
+      allowPrefixedUtilities: true, // 保留 a-* 工具类，默认: true
+      allowUnprefixed: true,        // 保留 bg-primary 这类旧裸类，默认: true
+      antPrefix: 'ant',             // CSS 变量前缀，默认: 'ant'
+      tokenPrefix: 'ant',           // 生成 bg-ant-primary 这类 namespace 安全类，默认: 'ant'
     }),
   ],
 })
@@ -78,31 +82,31 @@ export default defineConfig({
 
 ## 使用示例
 
-两个预设都支持相同的工具类模式：
+两个预设都同时输出**三套并存**的工具类，可独立开关：
+
+| 模式 | 示例 | 开关 | 适用场景 |
+| --- | --- | --- | --- |
+| **Prefixed**（稳定推荐） | `a-bg-primary`、`a-p-lg` | `allowPrefixedUtilities`（默认 `true`） | 大多数项目首选 |
+| **Namespace-safe**（推荐替代旧裸写法） | `bg-ant-primary`、`p-ant-lg` | `tokenPrefix`（默认 `'ant'`，置空则关闭） | 想用短类名但要避免污染框架原生 token |
+| **Legacy bare**（兼容老用法） | `bg-primary`、`p-lg` | `allowUnprefixed`（默认 `true`，下个 major 默认 `false`） | 仅存量项目 |
 
 ```vue
 <template>
-  <!-- 颜色 -->
+  <!-- 稳定的前缀 API -->
   <div class="a-bg-primary a-color-white">主色背景</div>
-  <div class="a-bg-container a-color-text">容器背景</div>
+  <div class="a-p-lg a-rounded-lg a-shadow-card">带前缀</div>
 
-  <!-- 间距 -->
-  <div class="a-p-lg a-m-sm">内边距和外边距</div>
-  <div class="a-px-md a-py-xs">方向性间距</div>
-
-  <!-- 边框 -->
-  <div class="a-border-primary a-rounded-lg">边框和圆角</div>
-  <div class="a-border-t-success">顶部边框颜色</div>
-
-  <!-- 阴影 -->
-  <div class="a-shadow-card">卡片阴影</div>
-
-  <!-- 文字 -->
-  <div class="a-text-lg a-color-primary">大号文字</div>
+  <!-- namespace 安全 API（推荐） -->
+  <div class="bg-ant-primary color-ant-white text-ant-lg p-ant-lg rounded-ant-lg shadow-ant-card">
+    namespace 安全
+  </div>
 </template>
 ```
 
-> 注意：该预设仅自定义 `m-*` / `p-*` 相关类，不会覆盖 UnoCSS 全局 spacing（`w-*`、`max-w-*`、`gap-*` 等保持默认行为）。
+> 说明：
+> - 该预设仅自定义 `m-*` / `p-*` 相关类，不会覆盖 UnoCSS 全局 spacing（`w-*`、`max-w-*`、`gap-*` 等保持默认行为）。
+> - `allowUnprefixed: false` 仅关闭 `bg-primary`、`text-sm` 这类旧裸类，`a-*` 与 `*-ant-*` 仍然可用。
+> - `tokenPrefix` 不再改写 theme key：`colors.primary` 始终是 `colors.primary`，命名空间在规则层解析，`bg-ant-primary` 与 `bg-primary` 都解析到同一份 `colors.primary`。
 
 ## 如何选择？
 
@@ -119,52 +123,52 @@ export default defineConfig({
 
 ## 支持的工具类
 
-### 颜色工具类
-- `a-color-{color}` / `a-c-{color}` - 文字颜色
-- `a-bg-{color}` - 背景颜色
-- `a-border-{color}` / `a-b-{color}` - 边框颜色
-- 方向性边框：`a-border-t-{color}`、`a-border-r-{color}` 等
+下表列出的工具类都同时提供三种写法（按你选择的模式查阅对应列）：
 
-### 间距工具类
-- `a-m-{size}` - 外边距
-- `a-mt-{size}`、`a-mr-{size}`、`a-mb-{size}`、`a-ml-{size}` - 方向性外边距
-- `a-mx-{size}`、`a-my-{size}` - 水平/垂直外边距
-- `a-p-{size}` - 内边距
-- `a-pt-{size}`、`a-pr-{size}`、`a-pb-{size}`、`a-pl-{size}` - 方向性内边距
-- `a-px-{size}`、`a-py-{size}` - 水平/垂直内边距
-
-### 边框圆角工具类
-- `a-rounded` / `a-rd` - 边框圆角
-- `a-rounded-{size}` / `a-rd-{size}` - 指定大小的边框圆角
-- 角落特定：`a-rounded-tl-{size}`、`a-rounded-tr-{size}` 等
-- 边侧特定：`a-rounded-t-{size}`、`a-rounded-r-{size}` 等
-
-### 阴影工具类
-- `a-shadow` - 默认阴影
-- `a-shadow-{type}` - 特定阴影类型（card、drawer-r 等）
-
-### 文字工具类
-- `a-text-{size}` - 字体大小（sm、lg、xl、h1、h2、h3）
+| 类别 | Prefixed (`a-*`) | Namespace-safe (`*-ant-*`) | Legacy bare |
+| --- | --- | --- | --- |
+| 文字颜色 | `a-color-{c}` / `a-c-{c}` | `color-ant-{c}` / `c-ant-{c}` | `color-{c}` / `c-{c}` |
+| 背景 | `a-bg-{c}` | `bg-ant-{c}`（`bg-ant` = primary） | `bg-{c}` |
+| 边框颜色 | `a-border-{c}` / `a-b-{c}` | `border-ant-{c}` / `b-ant-{c}` | `border-{c}` / `b-{c}` |
+| 方向性边框 | `a-border-{t/r/b/l/x/y}-{c}`（`a-bt-`…） | `border-{t/r/b/l/x/y}-ant-{c}`（`bt-ant-`…） | `border-{t/r/b/l/x/y}-{c}` |
+| Margin | `a-m{x/y/t/r/b/l}-{size}` | `m{x/y/t/r/b/l}-ant-{size}` | `m{x/y/t/r/b/l}-{size}` |
+| Padding | `a-p{x/y/t/r/b/l}-{size}` | `p{x/y/t/r/b/l}-ant-{size}` | `p{x/y/t/r/b/l}-{size}` |
+| 圆角 | `a-rounded[-{size}]` / `a-rd[-{size}]`（含角/边） | `rounded-ant[-{size}]` / `rd-ant[-{size}]`（裸 `rounded-ant` = DEFAULT） | `rounded[-{size}]` / `rd[-{size}]` |
+| 阴影 | `a-shadow[-{type}]` | `shadow-ant[-{type}]`（裸 `shadow-ant` = DEFAULT） | `shadow[-{type}]` |
+| 字体大小 | `a-text-{size}` | `text-ant-{size}` | `text-{size}` |
 
 ## 可用的主题标记
 
 ### 颜色
-- 主色：`primary`、`primary-hover`、`primary-active`、`primary-bg`
-- 状态：`success`、`warning`、`error`、`info`（+ `-bg`、`-border`、`-hover`）
-- 链接：`link`、`link-hover`、`link-active`
-- 文字：`text`、`text-secondary`、`text-tertiary`、`text-quat`
-- 背景：`base`、`container`、`layout`、`elevated`、`mask`
-- 边框：`border`、`border-sec`
-- 调色板：`blue`、`purple`、`cyan`、`green`、`magenta`、`pink`、`red`、`orange`、`yellow`、`volcano`、`geekblue`、`lime`、`gold`（带 1-10 级）
 
-### 间距（用于 `m-*` / `p-*`）
-`xxs`、`xs`、`sm`、`md`、`lg`、`xl`
+与 antdv 1.3.0 对齐。下列 token 都可用于 `color-`、`c-`、`bg-`、`border-`、`b-` 以及方向性 border 工具类（三种模式皆可）。
+
+- 主色（10 级）：`primary`、`primary-hover`、`primary-active`、`primary-bg`、`primary-bg-hover`、`primary-border`、`primary-border-hover`、`primary-text`、`primary-text-hover`、`primary-text-active`
+- Success / Warning / Error / Info（每个语义色都有同样的 10 级）：`{name}`、`{name}-hover`、`{name}-active`、`{name}-bg`、`{name}-bg-hover`、`{name}-border`、`{name}-border-hover`、`{name}-text`、`{name}-text-hover`、`{name}-text-active`
+- Error 独有：`error-bg-filled-hover`、`error-bg-active`、`error-affix`
+- Warning 独有：`warning-affix`
+- 链接：`link`、`link-hover`、`link-active`
+- 文字：`text`、`text-secondary`、`text-tertiary`、`text-quaternary`（别名 `text-quat`）、`text-placeholder`、`text-disabled`、`text-heading`、`text-label`、`text-description`、`text-light-solid`
+- 填充：`fill`、`fill-secondary`、`fill-tertiary`、`fill-quaternary`、`fill-content`、`fill-content-hover`、`fill-alter`
+- 背景：`base`、`container`、`container-disabled`、`layout`、`elevated`、`spotlight`、`blur`、`mask`、`solid`、`solid-hover`、`solid-active`
+- 边框：`border`、`border-secondary`（别名 `border-sec`）、`border-disabled`、`border-bg`
+- 图标：`icon`、`icon-hover`
+- 其它：`highlight`、`white`、`split`
+- 别名：`main`（= text）、`sec`（= text-secondary）、`quat`（= text-quaternary）
+- 调色板（1-10 级）：`blue`、`purple`、`cyan`、`green`、`magenta`、`pink`、`red`、`orange`、`yellow`、`volcano`、`geekblue`、`lime`、`gold`
+
+### 间距（与 antdv 1.3.0 对齐）
+
+- Padding（`p-*`）：`xxs`、`xs`、`sm`、`md`、`lg`、`xl`
+- Margin（`m-*`）：`xxs`、`xs`、`sm`、`md`、`lg`、`xl`、`xxl`
+
+> 相对早期 1.x 的 break change：`p-xxl` / `p-xxxl` / `m-xxxl` 已移除（antdv 源端对应 CSS 变量也已删除）。
 
 ### 边框圆角 / Radius
-`xs`、`sm`、`lg`
+`xs`、`sm`、`lg`（裸 `rounded` / `a-rounded` / `rounded-ant` 对应 DEFAULT）
 
 ### 阴影 / BoxShadow
-`sec`/`secondary`、`ter`/`tertiary`、`card`、`arrow`、`drawer-r`、`drawer-l`、`drawer-u`、`drawer-d`
+`sec`/`secondary`、`ter`/`tertiary`、`card`、`arrow`、`drawer-r`、`drawer-l`、`drawer-u`、`drawer-d`（裸 `shadow` / `a-shadow` / `shadow-ant` 对应 DEFAULT）
 
 ## 完整功能列表
 

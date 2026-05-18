@@ -14,7 +14,10 @@ import {
   buildShadowTheme,
 } from './theme'
 
-const spacingTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'] as const
+// 与 antdv 1.3.0 内置 CSS 变量保持一致：
+// padding 仅到 xl，margin 到 xxl，xxxl 已被移除
+const paddingTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const
+const marginTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const
 
 const paddingUtilityConfig = [
   ['p', ['padding']],
@@ -39,17 +42,18 @@ const marginUtilityConfig = [
 function buildSpacingUtilities(antPrefix: string) {
   const utilities: Record<string, Record<string, string>> = {}
 
-  for (const token of spacingTokens) {
+  for (const token of paddingTokens) {
     const paddingValue = `var(--${antPrefix}-padding-${token})`
-    const marginValue = `var(--${antPrefix}-margin-${token})`
-
     for (const [utilityName, cssProperties] of paddingUtilityConfig) {
       const selector = `.${utilityName}-${token}`
       utilities[selector] = utilities[selector] || {}
       for (const cssProperty of cssProperties)
         utilities[selector][cssProperty] = paddingValue
     }
+  }
 
+  for (const token of marginTokens) {
+    const marginValue = `var(--${antPrefix}-margin-${token})`
     for (const [utilityName, cssProperties] of marginUtilityConfig) {
       const selector = `.${utilityName}-${token}`
       utilities[selector] = utilities[selector] || {}

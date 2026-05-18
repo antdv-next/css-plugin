@@ -12,13 +12,13 @@
     "vue": "catalog:example"
   },
   "devDependencies": {
+    "@antdv-next/tailwind": "workspace:*",
     "@types/node": "catalog:example",
     "@vitejs/plugin-vue": "catalog:example",
     "@vue/tsconfig": "catalog:example",
-    "typescript": "catalog:example",
     "tailwindcss": "catalog:v3",
+    "typescript": "catalog:example",
     "vite": "catalog:example",
-    "vue-tsc": "catalog:example",
-    "@antdv-next/tailwind": "workspace:*"
+    "vue-tsc": "catalog:example"
   }
 }

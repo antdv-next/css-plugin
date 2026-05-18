@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "version": "0.0.0",
-  "packageManager": "pnpm@10.30.3",
+  "packageManager": "pnpm@10.33.4",
   "scripts": {
     "build": "pnpm -r build",
     "preinstall": "npx only-allow pnpm"
@@ -14,6 +14,6 @@
     "bumpp": "catalog:dev",
     "tsdown": "catalog:dev",
     "typescript": "catalog:example",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.6"
   }
 }

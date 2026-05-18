@@ -1,90 +1,196 @@
 /**
  * 规则生成函数
+ *
+ * 每组 `create*Rules` 都会按需输出三类工具类：
+ * - prefixed   ：`${prefix}-bg-primary`     —— 稳定 API（推荐）
+ * - unprefixed ：`bg-primary`               —— 旧 API（兼容）
+ * - namespaced ：`bg-${tokenPrefix}-primary`—— namespace 安全 API（推荐替代裸写法）
  */
 
-function resolveThemeTokenKey(token: string, themeTokenPrefix?: string) {
-  if (!themeTokenPrefix)
-    return token
-
-  return `${themeTokenPrefix}-${token}`
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 /**
- * 创建颜色类规则
+ * 将一个 token 名（可能带 namespace 前缀）解析回 theme 中的实际 key。
+ *
+ * - `resolveTokenKey('primary')                   -> 'primary'`
+ * - `resolveTokenKey('ant-primary', 'ant')        -> 'primary'`
+ * - `resolveTokenKey('ant', 'ant')                -> 'DEFAULT'`
+ * - `resolveTokenKey('primary', 'ant')            -> 'primary'`（不带 namespace 时透传）
  */
-export function createColorRules(prefix: string, themeTokenPrefix?: string) {
-  const p = prefix ? `${prefix}-` : ''
-  
-  return [
-    // ${prefix}-color-primary 或 ${prefix}-c-primary -> color: var(--${antPrefix}-color-primary)
-    [new RegExp(`^${p}(?:color|c)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
-      if (color)
-        return { color }
-    }],
+function resolveTokenKey(token: string, tokenPrefix?: string) {
+  if (!tokenPrefix)
+    return token
 
-    // ${prefix}-bg-container -> background-color: var(--${antPrefix}-color-bg-container)
-    [new RegExp(`^${p}bg-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
-      if (color)
-        return { 'background-color': color }
-    }],
-  ]
+  if (token === tokenPrefix)
+    return 'DEFAULT'
+
+  const namespacePrefix = `${tokenPrefix}-`
+  if (token.startsWith(namespacePrefix))
+    return token.slice(namespacePrefix.length)
+
+  return token
+}
+
+function createThemeValueResolver(themeKey: string, tokenPrefix?: string) {
+  return (token: string, theme: any) => (theme[themeKey] as any)?.[resolveTokenKey(token, tokenPrefix)]
+}
+
+/**
+ * 创建颜色类规则（color / bg）
+ */
+export function createColorRules(
+  prefix: string,
+  tokenPrefix?: string,
+  allowUnprefixed = true,
+  allowPrefixedUtilities = true,
+) {
+  const p = prefix ? `${prefix}-` : ''
+  const ns = tokenPrefix ? escapeRegExp(tokenPrefix) : ''
+  const resolveColor = (token: string, theme: any) =>
+    (theme.colors as any)?.[resolveTokenKey(token, tokenPrefix)]
+  const rules: any[] = []
+
+  if (allowPrefixedUtilities) {
+    rules.push(
+      [new RegExp(`^${p}(?:color|c)-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+        const color = resolveColor(token!, theme)
+        if (color)
+          return { color }
+      }],
+      [new RegExp(`^${p}bg-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+        const color = resolveColor(token!, theme)
+        if (color)
+          return { 'background-color': color }
+      }],
+    )
+  }
+
+  if (allowUnprefixed) {
+    rules.push(
+      [new RegExp(`^(?:color|c)-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+        const color = resolveColor(token!, theme)
+        if (color)
+          return { color }
+      }],
+      [new RegExp(`^bg-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+        const color = resolveColor(token!, theme)
+        if (color)
+          return { 'background-color': color }
+      }],
+    )
+  }
+
+  if (tokenPrefix) {
+    rules.push(
+      [new RegExp(`^(?:color|c)-${ns}(?:-(.+))?$`), ([_, token]: [any, any], { theme }: any) => {
+        const color = resolveColor(token ? `${tokenPrefix}-${token}` : tokenPrefix, theme)
+        if (color)
+          return { color }
+      }],
+      [new RegExp(`^bg-${ns}(?:-(.+))?$`), ([_, token]: [any, any], { theme }: any) => {
+        const color = resolveColor(token ? `${tokenPrefix}-${token}` : tokenPrefix, theme)
+        if (color)
+          return { 'background-color': color }
+      }],
+    )
+  }
+
+  return rules
 }
 
 /**
  * 创建边框颜色规则
  */
-export function createBorderRules(prefix: string, themeTokenPrefix?: string) {
+export function createBorderRules(
+  prefix: string,
+  tokenPrefix?: string,
+  allowUnprefixed = true,
+  allowPrefixedUtilities = true,
+) {
   const p = prefix ? `${prefix}-` : ''
-  
-  return [
-    // ${prefix}-border-primary 或 ${prefix}-b-primary -> border-color: ...
-    [new RegExp(`^${p}(?:border|b)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
+  const ns = tokenPrefix ? escapeRegExp(tokenPrefix) : ''
+  const resolveColor = (token: string, theme: any) =>
+    (theme.colors as any)?.[resolveTokenKey(token, tokenPrefix)]
+  const rules: any[] = []
+
+  if (allowPrefixedUtilities) {
+    rules.push([new RegExp(`^${p}(?:border|b)-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+      const color = resolveColor(token!, theme)
       if (color)
         return { 'border-color': color }
-    }],
-    // 方向性 border: bt/border-t, br/border-r, bb/border-b, bl/border-l
-    [new RegExp(`^${p}(?:border-t|bt)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
+    }])
+  }
+
+  if (allowUnprefixed) {
+    rules.push([new RegExp(`^(?:border|b)-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+      const color = resolveColor(token!, theme)
       if (color)
-        return { 'border-top-color': color }
-    }],
-    [new RegExp(`^${p}(?:border-r|br)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
+        return { 'border-color': color }
+    }])
+  }
+
+  if (tokenPrefix) {
+    rules.push([new RegExp(`^(?:border|b)-${ns}(?:-(.+))?$`), ([_, token]: [any, any], { theme }: any) => {
+      const color = resolveColor(token ? `${tokenPrefix}-${token}` : tokenPrefix, theme)
       if (color)
-        return { 'border-right-color': color }
-    }],
-    [new RegExp(`^${p}(?:border-b|bb)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
-      if (color)
-        return { 'border-bottom-color': color }
-    }],
-    [new RegExp(`^${p}(?:border-l|bl)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
-      if (color)
-        return { 'border-left-color': color }
-    }],
-    // 双向 border: bx/border-x, by/border-y
-    [new RegExp(`^${p}(?:border-x|bx)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
-      if (color)
-        return { 'border-left-color': color, 'border-right-color': color }
-    }],
-    [new RegExp(`^${p}(?:border-y|by)-(.+)$`), ([_, c]: [any, any], { theme }: any) => {
-      const color = (theme.colors as any)?.[resolveThemeTokenKey(c!, themeTokenPrefix)]
-      if (color)
-        return { 'border-top-color': color, 'border-bottom-color': color }
-    }],
-  ]
+        return { 'border-color': color }
+    }])
+  }
+
+  const directions = [
+    ['border-t', 'bt', ['border-top-color']],
+    ['border-r', 'br', ['border-right-color']],
+    ['border-b', 'bb', ['border-bottom-color']],
+    ['border-l', 'bl', ['border-left-color']],
+    ['border-x', 'bx', ['border-left-color', 'border-right-color']],
+    ['border-y', 'by', ['border-top-color', 'border-bottom-color']],
+  ] as const
+
+  for (const [full, short, props] of directions) {
+    if (allowPrefixedUtilities) {
+      rules.push([new RegExp(`^${p}(?:${full}|${short})-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+        const color = resolveColor(token!, theme)
+        if (!color)
+          return
+        return Object.fromEntries(props.map(prop => [prop, color]))
+      }])
+    }
+
+    if (allowUnprefixed) {
+      rules.push([new RegExp(`^(?:${full}|${short})-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+        const color = resolveColor(token!, theme)
+        if (!color)
+          return
+        return Object.fromEntries(props.map(prop => [prop, color]))
+      }])
+    }
+
+    if (tokenPrefix) {
+      rules.push([new RegExp(`^(?:${full}|${short})-${ns}(?:-(.+))?$`), ([_, token]: [any, any], { theme }: any) => {
+        const color = resolveColor(token ? `${tokenPrefix}-${token}` : tokenPrefix, theme)
+        if (!color)
+          return
+        return Object.fromEntries(props.map(prop => [prop, color]))
+      }])
+    }
+  }
+
+  return rules
 }
 
 /**
  * 创建间距规则（Margin / Padding）
+ *
+ * 与 antdv 1.3.0 内置 CSS 变量保持一致：
+ * - padding 仅到 xl（xxl/xxxl 已被移除）
+ * - margin 到 xxl（xxxl 已被移除）
  */
-const spacingTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'] as const
-const spacingTokenPattern = `(${spacingTokens.join('|')})`
+const paddingTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const
+const marginTokens = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const
+const paddingTokenPattern = `(${paddingTokens.join('|')})`
+const marginTokenPattern = `(${marginTokens.join('|')})`
 
 function getPaddingVar(antPrefix: string, token: string) {
   return `var(--${antPrefix}-padding-${token})`
@@ -94,176 +200,289 @@ function getMarginVar(antPrefix: string, token: string) {
   return `var(--${antPrefix}-margin-${token})`
 }
 
-export function createSpacingRules(prefix: string, antPrefix: string) {
-  const p = prefix ? `${prefix}-` : ''
-  
-  return [
-    // --- Margin ---
-    // ${prefix}-m-sm -> margin: 12px (var)
-    [new RegExp(`^${p}m-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      return { margin: getMarginVar(antPrefix, s) }
-    }],
-    // ${prefix}-mt-lg -> margin-top: 24px (var)
-    [new RegExp(`^${p}mt-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      return { 'margin-top': getMarginVar(antPrefix, s) }
-    }],
-    [new RegExp(`^${p}mb-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      return { 'margin-bottom': getMarginVar(antPrefix, s) }
-    }],
-    [new RegExp(`^${p}ml-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      return { 'margin-left': getMarginVar(antPrefix, s) }
-    }],
-    [new RegExp(`^${p}mr-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      return { 'margin-right': getMarginVar(antPrefix, s) }
-    }],
-    [new RegExp(`^${p}mx-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      const v = getMarginVar(antPrefix, s)
-      return { 'margin-left': v, 'margin-right': v }
-    }],
-    [new RegExp(`^${p}my-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      const v = getMarginVar(antPrefix, s)
-      return { 'margin-top': v, 'margin-bottom': v }
-    }],
+type SpacingUtility = readonly [
+  string,
+  string | readonly string[],
+  typeof getPaddingVar,
+  string,
+]
 
-    // --- Padding ---
-    [new RegExp(`^${p}p-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      return { padding: getPaddingVar(antPrefix, s) }
-    }],
-    [new RegExp(`^${p}pt-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      return { 'padding-top': getPaddingVar(antPrefix, s) }
-    }],
-    [new RegExp(`^${p}pb-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      return { 'padding-bottom': getPaddingVar(antPrefix, s) }
-    }],
-    [new RegExp(`^${p}pl-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      return { 'padding-left': getPaddingVar(antPrefix, s) }
-    }],
-    [new RegExp(`^${p}pr-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      return { 'padding-right': getPaddingVar(antPrefix, s) }
-    }],
-    [new RegExp(`^${p}px-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      const v = getPaddingVar(antPrefix, s)
-      return { 'padding-left': v, 'padding-right': v }
-    }],
-    [new RegExp(`^${p}py-${spacingTokenPattern}$`), ([_, s]: [any, any]) => {
-      const v = getPaddingVar(antPrefix, s)
-      return { 'padding-top': v, 'padding-bottom': v }
-    }],
-  ]
+export function createSpacingRules(
+  prefix: string,
+  antPrefix: string,
+  tokenPrefix?: string,
+  allowUnprefixed = true,
+  allowPrefixedUtilities = true,
+) {
+  const p = prefix ? `${prefix}-` : ''
+  const ns = tokenPrefix ? `${escapeRegExp(tokenPrefix)}-` : ''
+
+  const utilities: ReadonlyArray<SpacingUtility> = [
+    // margin
+    ['m', 'margin', getMarginVar, marginTokenPattern],
+    ['mt', 'margin-top', getMarginVar, marginTokenPattern],
+    ['mb', 'margin-bottom', getMarginVar, marginTokenPattern],
+    ['ml', 'margin-left', getMarginVar, marginTokenPattern],
+    ['mr', 'margin-right', getMarginVar, marginTokenPattern],
+    ['mx', ['margin-left', 'margin-right'], getMarginVar, marginTokenPattern],
+    ['my', ['margin-top', 'margin-bottom'], getMarginVar, marginTokenPattern],
+    // padding
+    ['p', 'padding', getPaddingVar, paddingTokenPattern],
+    ['pt', 'padding-top', getPaddingVar, paddingTokenPattern],
+    ['pb', 'padding-bottom', getPaddingVar, paddingTokenPattern],
+    ['pl', 'padding-left', getPaddingVar, paddingTokenPattern],
+    ['pr', 'padding-right', getPaddingVar, paddingTokenPattern],
+    ['px', ['padding-left', 'padding-right'], getPaddingVar, paddingTokenPattern],
+    ['py', ['padding-top', 'padding-bottom'], getPaddingVar, paddingTokenPattern],
+  ] as const
+
+  const createStyle = (
+    prop: string | readonly string[],
+    token: string,
+    getter: typeof getPaddingVar,
+  ) => {
+    const value = getter(antPrefix, token)
+    if (Array.isArray(prop))
+      return Object.fromEntries(prop.map(key => [key, value]))
+    return { [prop as string]: value }
+  }
+
+  const rules: any[] = []
+
+  for (const [utility, prop, getter, pattern] of utilities) {
+    if (allowPrefixedUtilities) {
+      rules.push([new RegExp(`^${p}${utility}-${pattern}$`), ([_, token]: [any, any]) => {
+        return createStyle(prop, token!, getter)
+      }])
+    }
+
+    if (allowUnprefixed) {
+      rules.push([new RegExp(`^${utility}-${pattern}$`), ([_, token]: [any, any]) => {
+        return createStyle(prop, token!, getter)
+      }])
+    }
+
+    if (tokenPrefix) {
+      rules.push([new RegExp(`^${utility}-${ns}${pattern}$`), ([_, token]: [any, any]) => {
+        return createStyle(prop, token!, getter)
+      }])
+    }
+  }
+
+  return rules
 }
 
 /**
  * 创建文本规则（支持 fontSize 和 text 两种模式）
- * @param prefix class 前缀
- * @param themeKey 主题键名，'fontSize' 或 'text'
  */
-export function createTextRules(prefix: string, themeKey: 'fontSize' | 'text' = 'fontSize', themeTokenPrefix?: string) {
+export function createTextRules(
+  prefix: string,
+  themeKey: 'fontSize' | 'text' = 'fontSize',
+  tokenPrefix?: string,
+  allowUnprefixed = true,
+  allowPrefixedUtilities = true,
+) {
   const p = prefix ? `${prefix}-` : ''
-  
-  return [
-    // ${prefix}-text-lg -> font-size: 16px (var)
-    [new RegExp(`^${p}text-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const key = resolveThemeTokenKey(s!, themeTokenPrefix)
-      if (themeKey === 'fontSize') {
-        const v = (theme.fontSize as any)?.[key]
-        if (v)
-          return { 'font-size': v }
-      }
-      else {
-        const textConfig = (theme.text as any)?.[key]
-        if (textConfig?.fontSize) {
-          return { 'font-size': textConfig.fontSize }
-        }
-      }
-    }],
-  ]
+  const ns = tokenPrefix ? `${escapeRegExp(tokenPrefix)}-` : ''
+  const rules: any[] = []
+
+  const resolveValue = (token: string, theme: any) => {
+    const key = resolveTokenKey(token, tokenPrefix)
+    if (themeKey === 'fontSize')
+      return (theme.fontSize as any)?.[key]
+    return (theme.text as any)?.[key]?.fontSize
+  }
+
+  if (allowPrefixedUtilities) {
+    rules.push([new RegExp(`^${p}text-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+      const value = resolveValue(token!, theme)
+      if (value)
+        return { 'font-size': value }
+    }])
+  }
+
+  if (allowUnprefixed) {
+    rules.push([new RegExp(`^text-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+      const value = resolveValue(token!, theme)
+      if (value)
+        return { 'font-size': value }
+    }])
+  }
+
+  if (tokenPrefix) {
+    rules.push([new RegExp(`^text-${ns}(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+      const value = resolveValue(`${tokenPrefix}-${token!}`, theme)
+      if (value)
+        return { 'font-size': value }
+    }])
+  }
+
+  return rules
+}
+
+function buildRadiusStyle(props: string[], value: string) {
+  return Object.fromEntries(props.map(prop => [prop, value]))
 }
 
 /**
- * 创建圆角规则（支持 borderRadius 和 radius 两种模式）
- * @param prefix class 前缀
- * @param themeKey 主题键名，'borderRadius' 或 'radius'
+ * 创建圆角规则
  */
-export function createRoundedRules(prefix: string, themeKey: 'borderRadius' | 'radius' = 'borderRadius', themeTokenPrefix?: string) {
+export function createRoundedRules(
+  prefix: string,
+  themeKey: 'borderRadius' | 'radius' = 'borderRadius',
+  tokenPrefix?: string,
+  allowUnprefixed = true,
+  allowPrefixedUtilities = true,
+) {
   const p = prefix ? `${prefix}-` : ''
-  
-  return [
-    // ${prefix}-rounded -> border-radius: var(--${antPrefix}-border-radius) (DEFAULT)
-    [new RegExp(`^${p}(?:rounded|rd)$`), (_: any, { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey('DEFAULT', themeTokenPrefix)]
-      if (v)
-        return { 'border-radius': v }
-    }],
-    // ${prefix}-rounded-sm 或 ${prefix}-rd-sm -> border-radius: 4px (var)
-    [new RegExp(`^${p}(?:rounded|rd)-(.+)$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s!, themeTokenPrefix)]
-      if (v)
-        return { 'border-radius': v }
-    }],
-    // 角落圆角: rounded-tl, rounded-tr, rounded-bl, rounded-br (简写: rd-tl, rd-tr, rd-bl, rd-br)
-    [new RegExp(`^${p}(?:rounded|rd)-tl(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
-      if (v)
-        return { 'border-top-left-radius': v }
-    }],
-    [new RegExp(`^${p}(?:rounded|rd)-tr(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
-      if (v)
-        return { 'border-top-right-radius': v }
-    }],
-    [new RegExp(`^${p}(?:rounded|rd)-bl(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
-      if (v)
-        return { 'border-bottom-left-radius': v }
-    }],
-    [new RegExp(`^${p}(?:rounded|rd)-br(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
-      if (v)
-        return { 'border-bottom-right-radius': v }
-    }],
-    // 边侧圆角: rounded-t, rounded-r, rounded-b, rounded-l (简写: rd-t, rd-r, rd-b, rd-l)
-    [new RegExp(`^${p}(?:rounded|rd)-t(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
-      if (v)
-        return { 'border-top-left-radius': v, 'border-top-right-radius': v }
-    }],
-    [new RegExp(`^${p}(?:rounded|rd)-r(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
-      if (v)
-        return { 'border-top-right-radius': v, 'border-bottom-right-radius': v }
-    }],
-    [new RegExp(`^${p}(?:rounded|rd)-b(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
-      if (v)
-        return { 'border-bottom-left-radius': v, 'border-bottom-right-radius': v }
-    }],
-    [new RegExp(`^${p}(?:rounded|rd)-l(?:-(.+))?$`), ([_, s]: [any, any], { theme }: any) => {
-      const v = (theme[themeKey] as any)?.[resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)]
-      if (v)
-        return { 'border-top-left-radius': v, 'border-bottom-left-radius': v }
-    }],
-  ]
+  const ns = tokenPrefix ? escapeRegExp(tokenPrefix) : ''
+  const resolveRadius = createThemeValueResolver(themeKey, tokenPrefix)
+  const rules: any[] = []
+
+  if (allowPrefixedUtilities) {
+    rules.push(
+      [new RegExp(`^${p}(?:rounded|rd)$`), (_: any, { theme }: any) => {
+        const value = resolveRadius('DEFAULT', theme)
+        if (value)
+          return { 'border-radius': value }
+      }],
+      [new RegExp(`^${p}(?:rounded|rd)-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+        const value = resolveRadius(token!, theme)
+        if (value)
+          return { 'border-radius': value }
+      }],
+    )
+  }
+
+  if (allowUnprefixed) {
+    rules.push(
+      [new RegExp(`^(?:rounded|rd)$`), (_: any, { theme }: any) => {
+        const value = resolveRadius('DEFAULT', theme)
+        if (value)
+          return { 'border-radius': value }
+      }],
+      [new RegExp(`^(?:rounded|rd)-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+        const value = resolveRadius(token!, theme)
+        if (value)
+          return { 'border-radius': value }
+      }],
+    )
+  }
+
+  if (tokenPrefix) {
+    rules.push(
+      [new RegExp(`^(?:rounded|rd)-${ns}$`), (_: any, { theme }: any) => {
+        const value = resolveRadius(tokenPrefix, theme)
+        if (value)
+          return { 'border-radius': value }
+      }],
+      [new RegExp(`^(?:rounded|rd)-${ns}-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+        const value = resolveRadius(`${tokenPrefix}-${token!}`, theme)
+        if (value)
+          return { 'border-radius': value }
+      }],
+    )
+  }
+
+  const directions = [
+    ['tl', ['border-top-left-radius']],
+    ['tr', ['border-top-right-radius']],
+    ['bl', ['border-bottom-left-radius']],
+    ['br', ['border-bottom-right-radius']],
+    ['t', ['border-top-left-radius', 'border-top-right-radius']],
+    ['r', ['border-top-right-radius', 'border-bottom-right-radius']],
+    ['b', ['border-bottom-left-radius', 'border-bottom-right-radius']],
+    ['l', ['border-top-left-radius', 'border-bottom-left-radius']],
+  ] as const
+
+  for (const [suffix, props] of directions) {
+    if (allowPrefixedUtilities) {
+      rules.push(
+        [new RegExp(`^${p}(?:rounded|rd)-${suffix}$`), (_: any, { theme }: any) => {
+          const value = resolveRadius('DEFAULT', theme)
+          if (value)
+            return buildRadiusStyle([...props], value)
+        }],
+        [new RegExp(`^${p}(?:rounded|rd)-${suffix}-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+          const value = resolveRadius(token!, theme)
+          if (value)
+            return buildRadiusStyle([...props], value)
+        }],
+      )
+    }
+
+    if (allowUnprefixed) {
+      rules.push(
+        [new RegExp(`^(?:rounded|rd)-${suffix}$`), (_: any, { theme }: any) => {
+          const value = resolveRadius('DEFAULT', theme)
+          if (value)
+            return buildRadiusStyle([...props], value)
+        }],
+        [new RegExp(`^(?:rounded|rd)-${suffix}-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+          const value = resolveRadius(token!, theme)
+          if (value)
+            return buildRadiusStyle([...props], value)
+        }],
+      )
+    }
+
+    if (tokenPrefix) {
+      rules.push(
+        [new RegExp(`^(?:rounded|rd)-${suffix}-${ns}$`), (_: any, { theme }: any) => {
+          const value = resolveRadius(tokenPrefix, theme)
+          if (value)
+            return buildRadiusStyle([...props], value)
+        }],
+        [new RegExp(`^(?:rounded|rd)-${suffix}-${ns}-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+          const value = resolveRadius(`${tokenPrefix}-${token!}`, theme)
+          if (value)
+            return buildRadiusStyle([...props], value)
+        }],
+      )
+    }
+  }
+
+  return rules
 }
 
 /**
- * 创建阴影规则（支持 boxShadow 和 shadow 两种模式）
- * @param prefix class 前缀
- * @param themeKey 主题键名，'boxShadow' 或 'shadow'
+ * 创建阴影规则
  */
-export function createShadowRules(prefix: string, themeKey: 'boxShadow' | 'shadow' = 'boxShadow', themeTokenPrefix?: string) {
+export function createShadowRules(
+  prefix: string,
+  themeKey: 'boxShadow' | 'shadow' = 'boxShadow',
+  tokenPrefix?: string,
+  allowUnprefixed = true,
+  allowPrefixedUtilities = true,
+) {
   const p = prefix ? `${prefix}-` : ''
-  
-  return [
-    [
-      new RegExp(`^${p}shadow(?:-(.+))?$`),
-      ([_, s]: [any, any], { theme }: any) => {
-        // 如果 s 存在(有后缀)，用 s；如果 s 不存在(没后缀)，用 'DEFAULT'
-        const key = resolveThemeTokenKey(s || 'DEFAULT', themeTokenPrefix)
-        const v = (theme[themeKey] as any)?.[key]
+  const ns = tokenPrefix ? escapeRegExp(tokenPrefix) : ''
+  const resolveShadow = createThemeValueResolver(themeKey, tokenPrefix)
+  const rules: any[] = []
 
-        if (v)
-          return { 'box-shadow': v }
-      },
-    ],
-  ]
+  if (allowPrefixedUtilities) {
+    rules.push([new RegExp(`^${p}shadow(?:-(.+))?$`), ([_, token]: [any, any], { theme }: any) => {
+      const value = resolveShadow(token || 'DEFAULT', theme)
+      if (value)
+        return { 'box-shadow': value }
+    }])
+  }
+
+  if (allowUnprefixed) {
+    rules.push([new RegExp(`^shadow(?:-(.+))?$`), ([_, token]: [any, any], { theme }: any) => {
+      const value = resolveShadow(token || 'DEFAULT', theme)
+      if (value)
+        return { 'box-shadow': value }
+    }])
+  }
+
+  if (tokenPrefix) {
+    rules.push([new RegExp(`^shadow-${ns}(?:-(.+))?$`), ([_, token]: [any, any], { theme }: any) => {
+      const value = resolveShadow(token ? `${tokenPrefix}-${token}` : tokenPrefix, theme)
+      if (value)
+        return { 'box-shadow': value }
+    }])
+  }
+
+  return rules
 }

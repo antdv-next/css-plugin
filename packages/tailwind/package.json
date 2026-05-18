@@ -30,6 +30,7 @@
       "default": "./dist/v4.js"
     },
     "./theme.css": "./theme.css",
+    "./compat.css": "./compat.css",
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
@@ -38,11 +39,13 @@
     "README.md",
     "README.zh-CN.md",
     "dist",
-    "theme.css"
+    "theme.css",
+    "compat.css"
   ],
   "scripts": {
-    "build": "tsdown && pnpm generate:theme",
+    "build": "tsdown && pnpm generate:theme && pnpm generate:compat",
     "generate:theme": "tsx scripts/generate-theme.ts",
+    "generate:compat": "tsx scripts/generate-compat.ts",
     "prepublish": "pnpm build",
     "bump": "bumpp --commit \"chore(release): @antdv-next/tailwind %s\" --push --tag \"@antdv-next/tailwind@%s\""
   },

@@ -157,7 +157,7 @@
   --color-gold-9: var(--ant-gold-9);
   --color-gold-10: var(--ant-gold-10);
 
-  /* Brand / Primary Colors */
+  /* Semantic Colors */
   --color-primary: var(--ant-color-primary);
   --color-primary-hover: var(--ant-color-primary-hover);
   --color-primary-active: var(--ant-color-primary-active);
@@ -168,8 +168,6 @@
   --color-primary-text: var(--ant-color-primary-text);
   --color-primary-text-hover: var(--ant-color-primary-text-hover);
   --color-primary-text-active: var(--ant-color-primary-text-active);
-
-  /* Functional Colors - Success */
   --color-success: var(--ant-color-success);
   --color-success-hover: var(--ant-color-success-hover);
   --color-success-active: var(--ant-color-success-active);
@@ -180,8 +178,6 @@
   --color-success-text: var(--ant-color-success-text);
   --color-success-text-hover: var(--ant-color-success-text-hover);
   --color-success-text-active: var(--ant-color-success-text-active);
-
-  /* Functional Colors - Warning */
   --color-warning: var(--ant-color-warning);
   --color-warning-hover: var(--ant-color-warning-hover);
   --color-warning-active: var(--ant-color-warning-active);
@@ -193,8 +189,6 @@
   --color-warning-text-hover: var(--ant-color-warning-text-hover);
   --color-warning-text-active: var(--ant-color-warning-text-active);
   --color-warning-affix: var(--ant-color-warning-affix);
-
-  /* Functional Colors - Error */
   --color-error: var(--ant-color-error);
   --color-error-hover: var(--ant-color-error-hover);
   --color-error-active: var(--ant-color-error-active);
@@ -208,8 +202,6 @@
   --color-error-text-hover: var(--ant-color-error-text-hover);
   --color-error-text-active: var(--ant-color-error-text-active);
   --color-error-affix: var(--ant-color-error-affix);
-
-  /* Functional Colors - Info */
   --color-info: var(--ant-color-info);
   --color-info-hover: var(--ant-color-info-hover);
   --color-info-active: var(--ant-color-info-active);
@@ -220,13 +212,9 @@
   --color-info-text: var(--ant-color-info-text);
   --color-info-text-hover: var(--ant-color-info-text-hover);
   --color-info-text-active: var(--ant-color-info-text-active);
-
-  /* Link Colors */
   --color-link: var(--ant-color-link);
   --color-link-hover: var(--ant-color-link-hover);
   --color-link-active: var(--ant-color-link-active);
-
-  /* Text Colors */
   --color-text: var(--ant-color-text);
   --color-text-secondary: var(--ant-color-text-secondary);
   --color-text-tertiary: var(--ant-color-text-tertiary);
@@ -241,8 +229,6 @@
   --color-main: var(--ant-color-text);
   --color-sec: var(--ant-color-text-secondary);
   --color-quat: var(--ant-color-text-quaternary);
-
-  /* Fill Colors */
   --color-fill: var(--ant-color-fill);
   --color-fill-secondary: var(--ant-color-fill-secondary);
   --color-fill-tertiary: var(--ant-color-fill-tertiary);
@@ -250,8 +236,6 @@
   --color-fill-content: var(--ant-color-fill-content);
   --color-fill-content-hover: var(--ant-color-fill-content-hover);
   --color-fill-alter: var(--ant-color-fill-alter);
-
-  /* Background Colors */
   --color-base: var(--ant-color-bg-base);
   --color-container: var(--ant-color-bg-container);
   --color-container-disabled: var(--ant-color-bg-container-disabled);
@@ -264,19 +248,13 @@
   --color-solid-hover: var(--ant-color-bg-solid-hover);
   --color-solid-active: var(--ant-color-bg-solid-active);
   --color-split: var(--ant-color-split);
-
-  /* Border Colors */
   --color-border: var(--ant-color-border);
   --color-border-secondary: var(--ant-color-border-secondary);
   --color-border-sec: var(--ant-color-border-secondary);
   --color-border-disabled: var(--ant-color-border-disabled);
   --color-border-bg: var(--ant-color-border-bg);
-
-  /* Icon Colors */
   --color-icon: var(--ant-color-icon);
   --color-icon-hover: var(--ant-color-icon-hover);
-
-  /* Misc */
   --color-highlight: var(--ant-color-highlight);
   --color-white: var(--ant-color-white);
 

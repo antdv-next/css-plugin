@@ -24,41 +24,83 @@ yarn add @antdv-next/tailwind
 
 ## Tailwind CSS v4 Usage (Recommended)
 
-Tailwind CSS v4 使用 `@theme` 指令在 CSS 中定义主题变量。
+Tailwind CSS v4 使用 `@theme` 指令在 CSS 中定义主题变量。本包提供两个并存的 v4 入口：
 
-### 方式 1: 直接导入 CSS 文件
+| 入口 | 工具类示例 | 适用场景 |
+| --- | --- | --- |
+| `theme.css`（经典） | `bg-primary`、`p-lg`、`text-lg`、`shadow-card` | 现存项目；接受 antdv token 直接占用 Tailwind 原生 utility |
+| `compat.css`（**推荐**） | `bg-ant-primary`、`p-ant-lg`、`text-ant-lg`、`shadow-ant-card`（再加可选的 `a-bg-primary` 等前缀简写） | 新项目；避免与 Tailwind 内置 token / 业务自定义 token 冲突 |
 
-在你的 CSS 文件中：
+> 详细背景见 [Issue #7 (RFC)](https://github.com/antdv-next/css-plugin/issues/7)。
+
+### 方式 1：直接导入 CSS 文件
 
 ```css
 @import "tailwindcss";
+
+/* 二选一 —— 经典入口 */
 @import "@antdv-next/tailwind/theme.css";
+
+/* 或者 —— 命名空间安全入口（推荐） */
+@import "@antdv-next/tailwind/compat.css";
 ```
 
-### 方式 2: 使用 JS 动态生成
+### 方式 2：使用 JS 动态生成
 
 ```ts
-import { generateThemeCSS } from '@antdv-next/tailwind/v4'
+import {
+  generateCompatThemeCSS,
+  generateThemeCSS,
+} from '@antdv-next/tailwind/v4'
 
-// 使用默认配置
+// 经典入口（默认 antPrefix='ant'）
 const css = generateThemeCSS()
 
-// 自定义配置
-const customCss = generateThemeCSS({ antPrefix: 'my-app' })
+// 命名空间安全入口
+const compatCss = generateCompatThemeCSS({
+  antPrefix: 'ant',             // antdv CSS 变量前缀
+  tokenPrefix: 'ant',           // 输出 --color-ant-primary、@utility p-ant-lg
+  prefix: 'a',                  // 额外输出 @utility a-bg-primary 等简写
+  allowPrefixedUtilities: true, // 是否生成上述前缀简写
+})
 ```
 
 ### Tailwind v4 使用示例
 
 ```vue
 <template>
+  <!-- 经典 theme.css 写法 -->
   <div class="bg-primary text-white p-lg rounded-lg shadow-card">
-    <h1 class="text-h1 text-primary">Hello Ant Design Vue</h1>
-    <p class="text-text-secondary mt-sm">
-      使用 Tailwind CSS v4 工具类
-    </p>
+    <h1 class="text-h1 text-primary">Classic theme.css</h1>
+  </div>
+
+  <!-- compat.css 推荐写法（命名空间安全） -->
+  <div class="bg-ant-primary text-ant-light-solid p-ant-lg rounded-ant-lg shadow-ant-card">
+    <h1 class="text-ant-h1 color-ant-primary">Namespace safe</h1>
+  </div>
+
+  <!-- compat.css 还会额外发出 a-* 前缀简写 -->
+  <div class="a-bg-primary a-color-white a-p-lg a-rounded-lg a-shadow-card">
+    Prefixed shortcut
   </div>
 </template>
 ```
+
+### compat.css 默认配置
+
+```ts
+generateCompatThemeCSS({
+  antPrefix: 'ant',
+  tokenPrefix: 'ant',
+  prefix: 'a',
+  allowPrefixedUtilities: true,
+})
+```
+
+- `antPrefix`：antdv-next CSS 变量前缀（与 `ConfigProvider` 的 `prefixCls` 对应）
+- `tokenPrefix`：注入 Tailwind v4 theme token 的命名空间，例如 `--color-ant-primary`、`--padding-ant-lg`、`--text-ant-lg`。同时会生成 `@utility p-ant-lg { padding: var(--padding-ant-lg) }` 这种安全的方向性 utility，避免覆盖 Tailwind 原生 `p-*`
+- `prefix`：额外的前缀 utility 写法（如 `a-bg-primary`、`a-p-lg`）。这些 utility 直接绑定到 antdv 变量，不依赖 `tokenPrefix`
+- `allowPrefixedUtilities`：是否生成上述前缀 utility。关闭后仅留 `@theme inline` 中的 namespace token
 
 ## Tailwind CSS v3 Usage
 

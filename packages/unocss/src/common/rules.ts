@@ -33,8 +33,26 @@ function resolveTokenKey(token: string, tokenPrefix?: string) {
   return token
 }
 
+/**
+ * 仅接受 CSS 变量引用形式（`var(--...)`）的 theme 值——本 preset 的 theme
+ * 值全部是这种形式。
+ *
+ * 合并后的 theme 同时含有 preset-wind 的默认值：fontSize 是
+ * `[size, lineHeight]` 元组、boxShadow 是数组、调色板是对象，直接输出会
+ * 产生非法 CSS；`black`/`shadow-sm` 等字符串原始值若被本 preset 拦截，
+ * 则会绕过 wind 的 `--un-shadow` / `--un-*-opacity` 变量管线，破坏
+ * ring、透明度修饰符等组合。因此非 var() 引用一律放行（返回 undefined
+ * 让 UnoCSS 继续匹配 preset-wind 的规则）。
+ *
+ * 必须整体匹配单个 var() 引用：wind 的 shadow-sm 等值以
+ * `var(--un-shadow-inset) ...` 开头但后面还有内容，不能被认领。
+ */
+function asTokenVarValue(value: unknown) {
+  return typeof value === 'string' && /^var\(--[\w-]+\)$/.test(value) ? value : undefined
+}
+
 function createThemeValueResolver(themeKey: string, tokenPrefix?: string) {
-  return (token: string, theme: any) => (theme[themeKey] as any)?.[resolveTokenKey(token, tokenPrefix)]
+  return (token: string, theme: any) => asTokenVarValue((theme[themeKey] as any)?.[resolveTokenKey(token, tokenPrefix)])
 }
 
 /**
@@ -45,11 +63,14 @@ export function createColorRules(
   tokenPrefix?: string,
   allowUnprefixed = true,
   allowPrefixedUtilities = true,
+  extraColors: Record<string, string> = {},
 ) {
   const p = prefix ? `${prefix}-` : ''
   const ns = tokenPrefix ? escapeRegExp(tokenPrefix) : ''
-  const resolveColor = (token: string, theme: any) =>
-    (theme.colors as any)?.[resolveTokenKey(token, tokenPrefix)]
+  const resolveColor = (token: string, theme: any) => {
+    const key = resolveTokenKey(token, tokenPrefix)
+    return asTokenVarValue((theme.colors as any)?.[key]) ?? extraColors[key]
+  }
   const rules: any[] = []
 
   if (allowPrefixedUtilities) {
@@ -101,6 +122,27 @@ export function createColorRules(
 }
 
 /**
+ * CSS border-style 关键字（preset-wind3 / preset-mini 的 border-style 工具类）。
+ *
+ * 裸写法的边框颜色规则必须放行这些关键字，否则 theme.colors 中的 `solid`
+ * （`bg-solid` 的颜色别名）会把 `border-solid` 解析成
+ * `border-color: var(--ant-color-bg-solid)`，覆盖默认的 `border-style: solid`。
+ * 需要该颜色时请使用 `border-ant-solid` 或带前缀的 `a-border-solid`。
+ */
+const borderStyleKeywords = new Set([
+  'solid',
+  'dashed',
+  'dotted',
+  'double',
+  'hidden',
+  'none',
+  'groove',
+  'ridge',
+  'inset',
+  'outset',
+])
+
+/**
  * 创建边框颜色规则
  */
 export function createBorderRules(
@@ -108,11 +150,14 @@ export function createBorderRules(
   tokenPrefix?: string,
   allowUnprefixed = true,
   allowPrefixedUtilities = true,
+  extraColors: Record<string, string> = {},
 ) {
   const p = prefix ? `${prefix}-` : ''
   const ns = tokenPrefix ? escapeRegExp(tokenPrefix) : ''
-  const resolveColor = (token: string, theme: any) =>
-    (theme.colors as any)?.[resolveTokenKey(token, tokenPrefix)]
+  const resolveColor = (token: string, theme: any) => {
+    const key = resolveTokenKey(token, tokenPrefix)
+    return asTokenVarValue((theme.colors as any)?.[key]) ?? extraColors[key]
+  }
   const rules: any[] = []
 
   if (allowPrefixedUtilities) {
@@ -125,6 +170,8 @@ export function createBorderRules(
 
   if (allowUnprefixed) {
     rules.push([new RegExp(`^(?:border|b)-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+      if (borderStyleKeywords.has(token!))
+        return
       const color = resolveColor(token!, theme)
       if (color)
         return { 'border-color': color }
@@ -160,6 +207,8 @@ export function createBorderRules(
 
     if (allowUnprefixed) {
       rules.push([new RegExp(`^(?:${full}|${short})-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+        if (borderStyleKeywords.has(token!))
+          return
         const color = resolveColor(token!, theme)
         if (!color)
           return
@@ -289,8 +338,8 @@ export function createTextRules(
   const resolveValue = (token: string, theme: any) => {
     const key = resolveTokenKey(token, tokenPrefix)
     if (themeKey === 'fontSize')
-      return (theme.fontSize as any)?.[key]
-    return (theme.text as any)?.[key]?.fontSize
+      return asTokenVarValue((theme.fontSize as any)?.[key])
+    return asTokenVarValue((theme.text as any)?.[key]?.fontSize)
   }
 
   if (allowPrefixedUtilities) {

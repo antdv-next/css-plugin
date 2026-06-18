@@ -236,7 +236,7 @@
   --color-fill-content: var(--ant-color-fill-content);
   --color-fill-content-hover: var(--ant-color-fill-content-hover);
   --color-fill-alter: var(--ant-color-fill-alter);
-  --color-base: var(--ant-color-bg-base);
+  --background-color-base: var(--ant-color-bg-base);
   --color-container: var(--ant-color-bg-container);
   --color-container-disabled: var(--ant-color-bg-container-disabled);
   --color-layout: var(--ant-color-bg-layout);
@@ -244,7 +244,8 @@
   --color-spotlight: var(--ant-color-bg-spotlight);
   --color-blur: var(--ant-color-bg-blur);
   --color-mask: var(--ant-color-bg-mask);
-  --color-solid: var(--ant-color-bg-solid);
+  --background-color-solid: var(--ant-color-bg-solid);
+  --text-color-solid: var(--ant-color-bg-solid);
   --color-solid-hover: var(--ant-color-bg-solid-hover);
   --color-solid-active: var(--ant-color-bg-solid-active);
   --color-split: var(--ant-color-split);

@@ -2,6 +2,7 @@ import type { Preset } from 'unocss'
 import type { BasePresetOptions } from './common'
 import { definePreset } from 'unocss'
 import {
+  buildBgOnlyColorsTheme,
   buildBorderRadiusTheme,
   buildColorsTheme,
   buildFontSizeTheme,
@@ -29,6 +30,8 @@ export const presetAntd = definePreset((options?: AntdPresetOptions): Preset => 
 
   // 根据 antPrefix 动态生成调色板
   const builtPalettes = buildPalettes(antPrefix)
+  // 与内置工具类同名、不进入 theme.colors 的颜色（如 base）
+  const bgOnlyColors = buildBgOnlyColorsTheme(antPrefix)
 
   return {
     name: 'preset-antd',
@@ -44,8 +47,8 @@ export const presetAntd = definePreset((options?: AntdPresetOptions): Preset => 
     // - 旧裸写法（bg-primary）
     // - namespace 安全（bg-ant-primary）
     rules: ([
-      ...createColorRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
-      ...createBorderRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createColorRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities, bgOnlyColors),
+      ...createBorderRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities, bgOnlyColors),
       ...createSpacingRules(prefix, antPrefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
       ...createTextRules(prefix, 'fontSize', tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
       ...createRoundedRules(prefix, 'borderRadius', tokenPrefix, allowUnprefixed, allowPrefixedUtilities),

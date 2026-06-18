@@ -115,7 +115,9 @@ export function buildColorsTheme(antPrefix: string, builtPalettes: Record<string
     'fill-alter': v('fill-alter'),
 
     // ---------- Background ----------
-    'base': v('bg-base'),
+    // `base`（colorBgBase）不在此处：theme.colors 会被合并进全局 theme，
+    // preset-wind 的 text-<color> 规则会把内置字号工具 text-base 解析成
+    // color 并覆盖 font-size（issue #10 同类冲突）。见 buildBgOnlyColorsTheme。
     'container': v('bg-container'),
     'container-disabled': v('bg-container-disabled'),
     'layout': v('bg-layout'),
@@ -147,6 +149,20 @@ export function buildColorsTheme(antPrefix: string, builtPalettes: Record<string
     // ---------- 其它 ----------
     'highlight': v('highlight'),
     'white': v('white'),
+  }
+}
+
+/**
+ * 不进入 theme.colors 的颜色 token。
+ *
+ * 这些 key 与 preset-wind 内置工具类同名（如 `base` 对应字号工具 text-base），
+ * 一旦进入合并后的全局 theme 就会被 wind 的颜色规则抢先解析。
+ * 它们只通过本 preset 自己的 color/bg/border 规则消费（见 createColorRules
+ * 等的 extraColors 参数），对应工具类（bg-base 等）行为不变。
+ */
+export function buildBgOnlyColorsTheme(antPrefix: string) {
+  return {
+    base: `var(--${antPrefix}-color-bg-base)`,
   }
 }
 

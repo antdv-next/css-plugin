@@ -2,6 +2,7 @@ import type { Preset } from 'unocss'
 import type { BasePresetOptions } from './common'
 import { definePreset } from 'unocss'
 import {
+  buildBgOnlyColorsTheme,
   buildColorsTheme,
   buildPalettes,
   buildRadiusTheme,
@@ -29,6 +30,8 @@ export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Op
 
   // 根据 antPrefix 动态生成调色板
   const builtPalettes = buildPalettes(antPrefix)
+  // 与内置工具类同名、不进入 theme.colors 的颜色（如 base）
+  const bgOnlyColors = buildBgOnlyColorsTheme(antPrefix)
 
   return {
     name: 'preset-antd-tailwind4',
@@ -43,8 +46,8 @@ export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Op
 
     // 自定义规则：内部按需输出三类工具类
     rules: ([
-      ...createColorRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
-      ...createBorderRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
+      ...createColorRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities, bgOnlyColors),
+      ...createBorderRules(prefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities, bgOnlyColors),
       ...createSpacingRules(prefix, antPrefix, tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
       ...createTextRules(prefix, 'text', tokenPrefix, allowUnprefixed, allowPrefixedUtilities),
       ...createRoundedRules(prefix, 'radius', tokenPrefix, allowUnprefixed, allowPrefixedUtilities),

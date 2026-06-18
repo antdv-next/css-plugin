@@ -106,7 +106,9 @@ export function buildColorsTheme(antPrefix: string, builtPalettes: Record<string
     'fill-alter': v('fill-alter'),
 
     // ---------- Background ----------
-    'base': v('bg-base'),
+    // `base`（colorBgBase）不在此处：colors 会扩散到 textColor，
+    // 与 Tailwind 内置字号工具 text-base 同名冲突（issue #10 同类问题）。
+    // 见 buildBackgroundColorTheme，仅注入 backgroundColor。
     'container': v('bg-container'),
     'container-disabled': v('bg-container-disabled'),
     'layout': v('bg-layout'),
@@ -114,7 +116,10 @@ export function buildColorsTheme(antPrefix: string, builtPalettes: Record<string
     'spotlight': v('bg-spotlight'),
     'blur': v('bg-blur'),
     'mask': v('bg-mask'),
-    'solid': v('bg-solid'),
+    // `solid` 不能放进 colors：colors 会扩散到 borderColor / divideColor /
+    // outlineColor，生成与 border-solid / divide-solid / outline-solid
+    // （border-style 工具类）同名的颜色工具类并覆盖其样式（issue #10）。
+    // 见 buildBackgroundColorTheme / buildTextColorTheme。
     'solid-hover': v('bg-solid-hover'),
     'solid-active': v('bg-solid-active'),
 
@@ -138,6 +143,28 @@ export function buildColorsTheme(antPrefix: string, builtPalettes: Record<string
     // ---------- 其它 ----------
     'highlight': v('highlight'),
     'white': v('white'),
+  }
+}
+
+/**
+ * 仅注入 backgroundColor 的颜色（不进入 colors，issue #10）：
+ * - `solid`：进入 borderColor / divideColor / outlineColor / decorationColor 会
+ *   生成与 border-solid 等 border-style 工具类同名的颜色工具类并覆盖其样式
+ * - `base`：进入 textColor 会与内置字号工具 text-base 同名冲突
+ */
+export function buildBackgroundColorTheme(antPrefix: string) {
+  return {
+    solid: `var(--${antPrefix}-color-bg-solid)`,
+    base: `var(--${antPrefix}-color-bg-base)`,
+  }
+}
+
+/**
+ * 仅注入 textColor 的颜色。不含 `base`——text-base 必须保持为字号工具类。
+ */
+export function buildTextColorTheme(antPrefix: string) {
+  return {
+    solid: `var(--${antPrefix}-color-bg-solid)`,
   }
 }
 

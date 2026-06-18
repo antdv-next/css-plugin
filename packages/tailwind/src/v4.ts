@@ -256,8 +256,22 @@ export function generateThemeCSS(options: AntdPluginOptions = {}): string {
   // 语义颜色
   lines.push('')
   lines.push('  /* Semantic Colors */')
-  for (const [key, antKey] of COLOR_TOKENS)
+  for (const [key, antKey] of COLOR_TOKENS) {
+    // 与内置工具类同名的 key 不能进入 --color-*（issue #10）：
+    // - solid：border-solid 等 border-style 工具会被同名边框颜色工具类覆盖
+    // - base：text-base 字号工具会被解析成文字颜色
+    // 因此降级到属性级命名空间（--background-color-* / --text-color-*）
+    if (key === 'solid') {
+      lines.push(`  --background-color-${key}: var(--${antPrefix}-color-${antKey});`)
+      lines.push(`  --text-color-${key}: var(--${antPrefix}-color-${antKey});`)
+      continue
+    }
+    if (key === 'base') {
+      lines.push(`  --background-color-${key}: var(--${antPrefix}-color-${antKey});`)
+      continue
+    }
     lines.push(`  --color-${key}: var(--${antPrefix}-color-${antKey});`)
+  }
 
   // Padding
   lines.push('')

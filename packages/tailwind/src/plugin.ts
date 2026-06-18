@@ -8,10 +8,12 @@ import type { AntdPluginOptions } from './types'
 import plugin from 'tailwindcss/plugin'
 import { buildPalettes } from './colors'
 import {
+  buildBackgroundColorTheme,
   buildBorderRadiusTheme,
   buildColorsTheme,
   buildFontSizeTheme,
   buildShadowTheme,
+  buildTextColorTheme,
 } from './theme'
 
 // 与 antdv 1.3.0 内置 CSS 变量保持一致：
@@ -102,6 +104,8 @@ export function createAntdPlugin(options: AntdPluginOptions = {}) {
       theme: {
         extend: {
           colors: buildColorsTheme(antPrefix, builtPalettes),
+          backgroundColor: buildBackgroundColorTheme(antPrefix),
+          textColor: buildTextColorTheme(antPrefix),
           borderRadius: buildBorderRadiusTheme(antPrefix),
           fontSize: buildFontSizeTheme(antPrefix),
           boxShadow: buildShadowTheme(antPrefix),

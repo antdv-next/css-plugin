@@ -28,6 +28,25 @@ describe('generateThemeCSS (classic)', () => {
   it('exposes a default snapshot via defaultThemeCSS', () => {
     expect(defaultThemeCSS).toBe(generateThemeCSS())
   })
+
+  it('keeps border-solid as a border-style utility (#10)', () => {
+    const css = generateThemeCSS()
+    // `--color-solid` 会让 border-solid 变成边框颜色工具类，必须限制在 bg/text 命名空间
+    expect(css).not.toContain('--color-solid:')
+    expect(css).toContain('--background-color-solid: var(--ant-color-bg-solid);')
+    expect(css).toContain('--text-color-solid: var(--ant-color-bg-solid);')
+    // solid-hover / solid-active 不与 border-style 关键字冲突，保持原命名空间
+    expect(css).toContain('--color-solid-hover: var(--ant-color-bg-solid-hover);')
+    expect(css).toContain('--color-solid-active: var(--ant-color-bg-solid-active);')
+  })
+
+  it('keeps text-base as a font-size utility (#10)', () => {
+    const css = generateThemeCSS()
+    // `--color-base` 会让内置字号工具 text-base 被解析成文字颜色，必须限制在 bg 命名空间
+    expect(css).not.toContain('--color-base:')
+    expect(css).not.toContain('--text-color-base:')
+    expect(css).toContain('--background-color-base: var(--ant-color-bg-base);')
+  })
 })
 
 describe('generateCompatThemeCSS (namespaced)', () => {

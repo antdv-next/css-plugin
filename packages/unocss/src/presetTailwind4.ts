@@ -22,7 +22,7 @@ export type { ColorName } from './common'
 export interface AntdPresetTailwind4Options extends BasePresetOptions {}
 
 export const presetAntdTailwind4 = definePreset((options?: AntdPresetTailwind4Options): Preset => {
-  const prefix = options?.prefix || 'a'
+  const prefix = options?.prefix ?? 'a'
   const allowPrefixedUtilities = options?.allowPrefixedUtilities ?? true
   const allowUnprefixed = options?.allowUnprefixed ?? true
   const antPrefix = options?.antPrefix || 'ant'

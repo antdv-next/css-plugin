@@ -4,7 +4,7 @@
 
 export interface BasePresetOptions {
   /**
-   * @desc 自定义 class 书写的前缀
+   * @desc 自定义 class 书写的前缀，传 '' 可生成不带前缀的工具类
    * @default 'a'
    * @example prefix: 'antd' -> class="antd-bg-primary"
    */

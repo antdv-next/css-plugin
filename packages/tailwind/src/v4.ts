@@ -344,7 +344,7 @@ export interface AntdV4CompatOptions {
   allowPrefixedUtilities?: boolean
 
   /**
-   * 前缀 utility 使用的前缀。
+   * 前缀 utility 使用的前缀，传 '' 可生成不带前缀的工具类。
    * @default 'a'
    * @example prefix: 'antd' -> @utility antd-bg-primary { ... }
    */
@@ -362,7 +362,8 @@ function pushPrefixedUtility(
   property: string,
   cssVar: string,
 ) {
-  lines.push(`@utility ${prefix}-${utility}-${token} {`)
+  const p = prefix ? `${prefix}-` : ''
+  lines.push(`@utility ${p}${utility}-${token} {`)
   lines.push(`  ${property}: var(${cssVar});`)
   lines.push('}')
 }
@@ -460,10 +461,11 @@ export function generateCompatThemeCSS(options: AntdV4CompatOptions = {}): strin
     pushDirectionalSpacingUtilities(lines, 'margin', marginTokens, marginUtilityConfig, '', tokenPrefix)
   }
 
-  // 可选：额外的 `${prefix}-*` 前缀简写
+  // 可选：额外的 `${prefix}-*` 前缀简写（prefix 为空时不带前缀段）
+  const utilityPrefix = prefix ? `${prefix}-` : ''
   if (allowPrefixedUtilities) {
     lines.push('')
-    lines.push(`/* Prefixed utilities (${prefix}-*) */`)
+    lines.push(`/* Prefixed utilities (${utilityPrefix}*) */`)
 
     // 颜色：a-bg-* / a-color-* (a-c-*) / a-border-* (a-b-*)
     for (const [key, antKey] of COLOR_TOKENS) {
@@ -511,10 +513,10 @@ export function generateCompatThemeCSS(options: AntdV4CompatOptions = {}): strin
     for (const [key, antKey] of RADIUS_TOKENS) {
       const cssVar = `--${antPrefix}-${antKey}`
       if (key === 'DEFAULT') {
-        lines.push(`@utility ${prefix}-rounded {`)
+        lines.push(`@utility ${utilityPrefix}rounded {`)
         lines.push(`  border-radius: var(${cssVar});`)
         lines.push('}')
-        lines.push(`@utility ${prefix}-rd {`)
+        lines.push(`@utility ${utilityPrefix}rd {`)
         lines.push(`  border-radius: var(${cssVar});`)
         lines.push('}')
       }
@@ -529,7 +531,7 @@ export function generateCompatThemeCSS(options: AntdV4CompatOptions = {}): strin
     for (const [key, antKey] of FONT_SIZE_TOKENS) {
       const cssVar = `--${antPrefix}-${antKey}`
       if (key === 'DEFAULT') {
-        lines.push(`@utility ${prefix}-text {`)
+        lines.push(`@utility ${utilityPrefix}text {`)
         lines.push(`  font-size: var(${cssVar});`)
         lines.push('}')
       }
@@ -543,7 +545,7 @@ export function generateCompatThemeCSS(options: AntdV4CompatOptions = {}): strin
     for (const [key, antKey] of SHADOW_TOKENS) {
       const cssVar = `--${antPrefix}-${antKey}`
       if (key === 'DEFAULT') {
-        lines.push(`@utility ${prefix}-shadow {`)
+        lines.push(`@utility ${utilityPrefix}shadow {`)
         lines.push(`  box-shadow: var(${cssVar});`)
         lines.push('}')
       }

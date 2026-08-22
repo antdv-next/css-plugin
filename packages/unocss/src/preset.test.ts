@@ -205,6 +205,22 @@ describe('presetAntd', () => {
     expect(css).toMatch(/\.shadow-none\{--un-shadow:/)
   })
 
+  it('respects an explicitly empty prefix instead of falling back to "a" (#11)', () => {
+    const preset = presetAntd({ prefix: '', allowUnprefixed: false })
+
+    // prefix 为空时，前缀写法退化为不带前缀段的工具类
+    expect(hasMatchingRule(preset.rules as any[], 'a-bg-primary')).toBe(false)
+    expect(resolveUtility(preset, 'bg-primary')).toEqual({
+      'background-color': 'var(--ant-color-primary)',
+    })
+    // border-style 关键字仍需放行，不能被空前缀规则劫持（#10）
+    expect(resolveUtility(preset, 'border-solid')).toBeUndefined()
+    expect(resolveUtility(preset, 'border-t-solid')).toBeUndefined()
+    expect(resolveUtility(preset, 'border-solid-hover')).toEqual({
+      'border-color': 'var(--ant-color-bg-solid-hover)',
+    })
+  })
+
   it('disables namespace mode when tokenPrefix is empty', () => {
     const preset = presetAntd({ tokenPrefix: '' })
 
@@ -226,6 +242,15 @@ describe('presetAntdTailwind4', () => {
     expect(hasMatchingRule(preset.rules as any[], 'color-primary')).toBe(true)
     expect(hasMatchingRule(preset.rules as any[], 'rounded-ant-lg')).toBe(true)
     expect(hasUnprefixedAutocomplete(preset.autocomplete?.templates as string[])).toBe(true)
+  })
+
+  it('respects an explicitly empty prefix instead of falling back to "a" (#11)', () => {
+    const preset = presetAntdTailwind4({ prefix: '', allowUnprefixed: false })
+
+    expect(hasMatchingRule(preset.rules as any[], 'a-color-primary')).toBe(false)
+    expect(resolveUtility(preset, 'bg-primary')).toEqual({
+      'background-color': 'var(--ant-color-primary)',
+    })
   })
 
   it('can disable legacy bare utilities without rewriting theme keys', () => {

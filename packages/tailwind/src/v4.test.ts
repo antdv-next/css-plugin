@@ -111,6 +111,16 @@ describe('generateCompatThemeCSS (namespaced)', () => {
     expect(css).not.toContain('@utility a-bg-primary')
   })
 
+  it('emits unprefixed shortcut utilities when prefix is empty (#11)', () => {
+    const css = generateCompatThemeCSS({ prefix: '' })
+    expect(css).toContain('@utility bg-primary {')
+    expect(css).toContain('@utility rounded {')
+    expect(css).toContain('@utility shadow-card {')
+    expect(css).not.toContain('@utility a-bg-primary')
+    // 不能生成带前导连字符的非法工具类名
+    expect(css).not.toMatch(/@utility -/)
+  })
+
   it('honors custom antPrefix (CSS variable source)', () => {
     const css = generateCompatThemeCSS({ antPrefix: 'my' })
     expect(css).toContain('--color-ant-primary: var(--my-color-primary);')

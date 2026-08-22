@@ -162,6 +162,9 @@ export function createBorderRules(
 
   if (allowPrefixedUtilities) {
     rules.push([new RegExp(`^${p}(?:border|b)-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+      // prefix 为空时该规则等价于裸写法，同样要放行 border-style 关键字（#10）
+      if (!p && borderStyleKeywords.has(token!))
+        return
       const color = resolveColor(token!, theme)
       if (color)
         return { 'border-color': color }
@@ -198,6 +201,8 @@ export function createBorderRules(
   for (const [full, short, props] of directions) {
     if (allowPrefixedUtilities) {
       rules.push([new RegExp(`^${p}(?:${full}|${short})-(.+)$`), ([_, token]: [any, any], { theme }: any) => {
+        if (!p && borderStyleKeywords.has(token!))
+          return
         const color = resolveColor(token!, theme)
         if (!color)
           return

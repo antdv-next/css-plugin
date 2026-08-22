@@ -22,7 +22,7 @@ export type { ColorName } from './common'
 export interface AntdPresetOptions extends BasePresetOptions {}
 
 export const presetAntd = definePreset((options?: AntdPresetOptions): Preset => {
-  const prefix = options?.prefix || 'a'
+  const prefix = options?.prefix ?? 'a'
   const allowPrefixedUtilities = options?.allowPrefixedUtilities ?? true
   const allowUnprefixed = options?.allowUnprefixed ?? true
   const antPrefix = options?.antPrefix || 'ant'
